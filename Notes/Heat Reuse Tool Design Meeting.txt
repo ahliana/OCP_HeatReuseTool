@@ -1,0 +1,429 @@
+Ahliana Byrd  0:00  
+Okay, so A is the power, and that's the drop down of 1, 2, 3, 4, 5.
+
+Ahliana Byrd  0:10  
+which is the left column, okay, the white column, okay.
+
+Ahliana Byrd  0:17  
+And column B is the T1
+
+Jack Kolar  0:22  
+this is that calling number. Oh,
+
+Ahliana Byrd  0:23  
+I'm sorry. Okay,
+
+Jack Kolar  0:27  
+let me go to... This one is a little easier to use
+
+Jack Kolar  0:35  
+okay, because
+
+Jack Kolar  0:37  
+we're going to convert it. We'll convert the other guys back to this, okay,
+
+Ahliana Byrd  0:40  
+so the power is in megawatts, and that's the same as capacity, yeah.
+
+Jack Kolar  0:46  
+Would it be easier for you to would it be easier, as far as all if I swapped the position of this column, of this column, I exist. This is the next criteria.
+
+Ahliana Byrd  0:56  
+It does not matter, as long as you tell me what these things are.
+
+Ahliana Byrd  1:06  
+So
+
+Ahliana Byrd  1:09  
+the out in degrees Celsius, okay, there will be an in in degree Celsius, and out in degrees Celsius,
+
+Ahliana Byrd  1:29  
+that will help a lot. I know we've
+
+Jack Kolar  1:30  
+called this tower, okay, do
+
+Ahliana Byrd  1:44  
+Okay, okay, now and so T1 they should have a drop down,
+
+Ahliana Byrd  1:53  
+and you get 20, 30, and
+
+Ahliana Byrd  1:55  
+45 or 45 okay, okay.
+
+Jack Kolar  2:03  
+And then the difference between what comes in and comes out. So tell you what, since this is, this is my sheet, let's just,
+
+Jack Kolar  2:18  
+let's just change these.
+
+Jack Kolar  2:21  
+What matters, how? How is it simplified for you, capacity or power? Is the amount of heat being
+
+Ahliana Byrd  2:30  
+both, both, understanding both of them, having the all the labels that make sense, helps. Okay? I
+
+Jack Kolar  2:46  
+I'm just gonna move this. Okay,
+
+Ahliana Byrd  2:50  
+you could just pick up D,
+
+Ahliana Byrd  3:02  
+no, you gotta pick it up. And you have to, you have to grab it. You
+
+Ahliana Byrd  3:09  
+have to go to just below the top of the line there, you should be able to grab it. There. You had it. You had it.
+
+Ahliana Byrd  3:21  
+Thanks for trying to don't
+
+Jack Kolar  3:31  
+know what else is merged. Oh, this is merged. I don't know where that's gonna
+
+Ahliana Byrd  3:42  
+go. Gonna go. You don't you don't need to move it for me. Okay?
+
+Jack Kolar  3:49  
+If that's a flow is flow.
+
+Ahliana Byrd  4:23  
+Okay.
+
+Jack Kolar  4:27  
+Temperature difference. I have been calling this that because, okay, that's what we call it in the business. Okay? I
+
+Ahliana Byrd  4:37  
+So and the flow is that, like that F1 or F2 or just leave it as flow. It's it's fine.
+
+Jack Kolar  4:53  
+I'm trying to think of which is so it would be flow sub TCS or flow, sub FWS. Okay? I'm trying to think, Where do I I'm trying to remember, where do I also have it?
+
+Jack Kolar  5:11  
+That's fine. It's it needs to be consistent with the dictionary, whatever the dictionary is, and I don't have that open. So,
+
+Ahliana Byrd  5:19  
+so that flow, but it would be flow TCS here, flow, 
+
+Jack Kolar  5:26  
+I need to be consistent with the dictionary, whatever that says. So
+
+Ahliana Byrd  5:58  
+F1 TCS flow rate, okay? And F2 is FWS flow rate, at least that's what's on here. I
+
+Jack Kolar  6:06  
+don't know where that came from, but we're going
+
+Jack Kolar  6:08  
+to use it because, because that's what you already have, okay,
+
+Ahliana Byrd  6:15  
+okay, or if you want to, if wherever the dictionary is, I don't know what dictionary you're looking it's
+
+Jack Kolar  6:21  
+in the spreadsheet version of the Python thing. What?
+
+Jack Kolar  6:35  
+And then I
+
+Jack Kolar  6:47  
+which is T3 and which is T4 just to be sure I got them right. T3, is the outlet to consumer.
+
+Ahliana Byrd  6:55  
+Okay. T1 is outlet to TCS. T2 is inlet from TCS. T3 is outlet to consumer, and T4 is inlet from consumer. Okay, okay,
+
+Jack Kolar  7:32  
+so then going, going back. We have waffled on this. I've written it differently on both these pages. We should decide and then just tell them. It's intuitive, like this is 10 degrees apart, and this is 12 and this is 14. So am I going to ask them, is it 20 and 34 or is it 20 and 14?
+
+Ahliana Byrd  8:00  
+I don't know what they think of then, and 
+
+Jack Kolar  8:11  
+It's, it's, it's immutable, it's like it just is. So they might think of either one. I don't know. I a like a difference of 14 is 14.
+
+Ahliana Byrd  8:29  
+So in programming, our answer is, ask the customer.
+
+Jack Kolar  8:35  
+Let's problem is, you will get equal versions. It's objects. And I've already asked ChatGPT This question,
+
+Ahliana Byrd  8:50  
+okay, I was gonna ask Claude, see what
+
+Jack Kolar  8:54  
+Claude says. I literally asked this just to see what a predominant idea would be and it did not happen.
+
+Ahliana Byrd  9:05  
+Okay, how would you ask this? What's, what's the wording that you would use to ask this question
+
+Jack Kolar  9:15  
+in considering the I
+
+Jack Kolar  9:23  
+I can't I can't ask the question without stilting The answer, okay,
+
+Ahliana Byrd  9:29  
+Let's see we're looking at T1 and T2 Yes. I
+
+Ahliana Byrd  10:08  
+as Our degree I'm
+
+Ahliana Byrd  12:09  
+okay. Claude says, looking at your heat reuse tool in the interest in the industrial context, professionals in thermal systems typically think about okay. It says the most common approach is get T1, and T2 and calculate delta t. Why this is the industry norm. Direct measurement T1, and T2 are actual sensor readings from the system. Real World workflow operators read thermal thermometers and sensors at inlet and outlet points, easy to double check against physical instruments. When something's wrong, you check the actual temperatures first secondary approach T1 plus delta and calculate T2 we need a 10 degrees temperature rise across this heat exchanger performance specifications, systems must deliver x degree Celsius differential control systems maintain 15 degree cels Celsius, delta T, regardless of inlet temperature. Industry perspectives for your heat reuse application operators will almost certainly want to enter T1 and T2 what they measure at the outlet and inlet, and have the system calculate delta T automatically. This matches... This matches how they actually work. They walk around with instruments, take readings, and want the system to do the math, the calculated delta becomes a key, key performance indicator they monitor over time. Recommendation for your tool make T1 and T2 as primary inputs with delta T as a calculated display value. You could optionally offer a design mode toggle where users can offer T1 and desired delta T to calculate the required T2 but the default should mirror the their measurement workflow. This approach will feel natural to your users and match their existing operational procedures.
+
+Jack Kolar  14:15  
+Okay, so it went around a circle, and it ended up with how they would use it in the field, which is actually not what this is. But let's just take T1 and T2 Okay, and just keep moving down the road. Okay, okay. So now we have this. Column A is the power and Column B is T1 and column T c is T2 and
+
+Jack Kolar  14:43  
+actually we have the approach at column E, because we have the flow mixed in there. Okay,
+
+Jack Kolar  14:53  
+so would you
+
+Ahliana Byrd  14:55  
+like to have a radio button where they could click, I'm going to enter T2 or click, I'm going to enter, no, this is
+
+Jack Kolar  15:07  
+not worth. How much work. Okay, if we were doing like 36.7, and 17.2 and we have to do now we're doing 10, 12, 14, so if they're not that fucking smart, they shouldn't be doing this. So 
+
+Ahliana Byrd  15:21  
+I'm trying to offer options. 
+
+Jack Kolar  15:23  
+It's for this extra work. We just don't need it all, right?
+
+Jack Kolar  15:28  
+T1, T2, okay.
+
+Ahliana Byrd  15:40  
+T1, and T2, okay,
+
+Jack Kolar  15:42  
+so what was the question?
+
+Ahliana Byrd  15:46  
+Now, which of these are offering drop downs of specific, 
+
+Jack Kolar  15:50  
+All of them, every one. So the first one A, size, that's 5:  1, 2, 3, 4, 5.
+
+Ahliana Byrd  15:58  
+okay. 
+
+Jack Kolar  16:00  
+T1, the next one is 20, 30, 45.
+
+Ahliana Byrd  16:06  
+okay, I need to write this down. 
+
+Jack Kolar  16:11  
+Do you want paper? You want to 
+
+Ahliana Byrd  16:13  
+Paper would actually be easier.
+
+Jack Kolar  16:17  
+How about I'll write them down. Okay, wouldn't that be weird? I
+
+Jack Kolar  16:30  
+Okay, A: power or capacity.
+
+Jack Kolar  16:51  
+B: 20, 30, 45, right? Yeah, and that may have to change in the tool later, because this business is changing, okay? And what this is all about is people cooling whoever's chips they think they need to cool, and what temperature those people say you have to have? Okay? And they're all still arguing about it, okay? Microsoft says 45 okay. Somebody then in the business said 30, okay. Somebody else wants 20.
+
+Jack Kolar  17:37  
+I don't even know who it is. Okay?
+
+Jack Kolar  17:43  
+C, T2,
+
+Jack Kolar  17:48  
+this is where it now is a little complicated, okay, because you there are three levels, there's 10 or 12 or 14; 10, or 12 or 14 from 20 is 32, 34... no, it's 30, 32, 34
+
+Ahliana Byrd  18:09  
+Okay,
+
+Jack Kolar  18:10  
+from 20, it's 20. From 30, it's 40, 42, 44 from 45 it's 55, 57 59 so now you have nine choices,
+
+Ahliana Byrd  18:27  
+okay, because it's
+
+Jack Kolar  18:29  
+10 or 12 or 14, plus those other three. So we've made an array.
+
+Ahliana Byrd  18:35  
+Can I just calculate it? Can I just have it calculated? Then you need delta T of 10
+
+Jack Kolar  18:44  
+or 12 or 14. Yes, yes, you can Okay.
+
+Ahliana Byrd  18:51  
+So
+
+Speaker 1  18:54  
+T2 here, I'm going to do it like this, and you T1 plus 10, T1, plus 12, T1, plus 14.
+
+Ahliana Byrd  19:10  
+Okay, I see,
+
+Jack Kolar  19:11  
+and that's why it was delta. T,
+
+Ahliana Byrd  19:13  
+got it.
+
+Jack Kolar  19:18  
+Okay, right? So, because now it's an array, all right, so, and then we had E, which is the approach,
+
+Jack Kolar  19:25  
+and that is two or three or five, okay?
+
+Jack Kolar  19:33  
+And from that, unless we decide brace plate versus gasket from that everything else is given. It's all it all falls out. Okay?
+
+Ahliana Byrd  19:50  
+Ok. okay?
+
+Jack Kolar  20:06  
+And I sent you a copy of the dictionary. Okay? Of the data dictionary,
+
+Jack Kolar  20:15  
+I think I also sent it to me, which means it should be here, here. So it's... Oh, this thing kills me somehow in my accounts for Microsoft, the account that has this mail does not see the account that has Microsoft 365, they don't talk so open desktop. I desktop.
+
+Jack Kolar  21:07  
+Here it's this. It's as weird and overwhelming as it is, it is still not complete, because there are things that are missing, okay, but all this stuff is... I do have to use Control Alt to find stuff. It's all, long description, short description, variable, name, data, type, standard units.
+
+Jack Kolar  21:54  
+This is irrelevant, right now. Okay, there's, there was a database, spreadsheet that uses them all. If there's default and anticipate a range of values.
+
+Jack Kolar  22:14  
+Some of them don't have, but some of them are if they're in here, it was for a reason. Let's see. I am going to highlight, Oh, I already sent it to you. Here's T1 here's T2, here's F1, P1, and P2, T4, T3, P3, P4, F2, the problem with it is it's not for a novice. You'd have to know where you're looking. I
+
+Ahliana Byrd  22:59  
+Yes, okay,
+
+Jack Kolar  23:30  
+I can certainly take feedback or criticism on that. It's been put out. It's in the git hub. No one said very much about it. But again, if you're not already doing this, it's hard to use because, like, where the hell would you look for stuff, although everything is there, down to some of the individual costs of individual things, a couple 100 lines down. But um
+
+Ahliana Byrd  30:20  
+be strictly from a data point, if the unit should be yes or no, I would think Boolean, and if you allow them string, you will Get something other than yes or no. Good thought. Dealing with data and users that is, 
+
+Jack Kolar  30:52  
+That's a good change. I will go through there, but there's no hury,  no one else is using
+
+Ahliana Byrd  31:00  
+I understand. Me. I'm not going through this with a fine tooth comb. That is just something that stands out to somebody who deals with database and users. 
+
+Jack Kolar  31:12  
+And no, it's really good. And I had not... so how old this is. I hadn't taken any of the AI courses yet; like this is from the year before that. So I was just guessing at a lot of this stuff. And I don't think there's, I don't think there's Boolean in here anywhere. Okay, so it's obvious now.
+
+Ahliana Byrd  31:35  
+yeah, anytime you have yes or no, anytime you offer them a string, they're going to put in crap that is not what you want. 
+
+Jack Kolar  31:47  
+Did I say how long it is?
+
+Ahliana Byrd  31:50  
+No 
+
+Jack Kolar  31:51  
+Go to the right? How many characters?
+
+Ahliana Byrd  31:57  
+Does not say.
+
+Jack Kolar  31:59  
+Yeah, doesn't Okay, all right, 
+
+Ahliana Byrd  32:04  
+That's, yes, the string values will end up with things that you don't think of, and they will put in... string values will end up with non Roman characters. There's going to be em dashes and non breaking spaces. 
+
+Ahliana Byrd  32:56  
+um, you were and just in talking about data types, this is completely valid. Int and meters, you're going to have people working in the US and non US, right? 
+
+Jack Kolar  33:12  
+And they're going to have to work in meters, okay?
+
+Ahliana Byrd  33:16  
+And meters is the, in my opinion, the correct default, because it's the default everywhere, but here, right?
+
+Jack Kolar  33:24  
+And and in engineering here, this is an acceptable Good, okay, good, yeah, because and and it's the correct answer. Could be miles, is the actual answer. So no convert to meters, okay? Or, you know, somebody I could, I could change it to kilometers, but just meters, and that's fine, because it might be next door, it might be two miles away. Those are, those are valid, and we don't know. And some of the like, there's a database that accompanies this, that this came backwards out of, okay, say, database. It was a bunch of information, and some of it is data. Some of it is, how big is your data center? Is it one to two? Is it three to seven? Is it seven to 10? That's not data, it's information. But we backed out of, I backed out of but all was available and built this. So, yeah, so and integer meters. We don't want string meters, That's for sure. Anyway, I
+
+Ahliana Byrd  35:09  
+and here the float was okay, because you're doing euros okay. I'm not sure how they're going to do benefits in euros. Yeah, you've got, not certain how to quantify here, but that's gonna be, 
+
+Jack Kolar  35:26  
+And I meant it.
+
+Ahliana Byrd  35:27  
+I get that. 
+
+Jack Kolar  35:29  
+So, so the thing is, oh, man, I just had that chart out too, that I had this flow chart, and it's, I but it's about two dozen folders full of information, and you've seen six or eight of them. And then there's one for operating costs of different things, and I don't have that. And then there's what does the engineering and architect cost? What do other consultants cost? Don't have that. What does it cost to get a building permit? What does it cost to tear up the street that puts pipe in the ground? What do you get for revenue from the stuff, these are all down there further. But what do you get as an incentive, the business costs and benefits? What? Why would you do this? And this is why it doesn't exist in America versus does in Europe. Because if this, if this doesn't fall out, if this set of lines doesn't fall out in America nobody builds. So you can get tax credits for building a data center. You could get different tax credits if you put in heat reuse, depending on where you are. You can get carbon credits for the power that you didn't use to create the heat on the other side, okay, you can also get possibly carbon credits for the cooling that you didn't use, because this system cools the product on the way back. And you use this to cool your data, and so you didn't pay for the cooling, so that all gets melted into here, right? So that's but, but why this is a comprehensive, holistic approach is that we haven't done that yet, and if somebody wants to there's there, you put the data, put in the CSV file. We'll slap it in here, done. And if nobody ever does, well, nobody ever does so but I like, we've all been clear, I'm not doing that. Okay? Like, no. Peder in Sweden is working on those kind of things. Okay, that's what he does, okay? Because I don't know why,
+
+Ahliana Byrd  38:03  
+okay, 
+
+Jack Kolar  38:03  
+because he's European,
+
+Ahliana Byrd  38:04  
+so you are not doing these, 
+
+Jack Kolar  38:07  
+but the concept of the data dictionary and the system allows for it all to happen in the future. Okay, that's the point at any point after I turn this in, at any point, like I should be able to walk away. And this just lives on, and people can go fill in the blanks whenever the hell they want to or never. And it does what it does, and it only does it to the extent that we've already done it. And there's no the I think the point about having the Python and having the CSV files makes it all very clear what's available, what's not. And if somebody wants to argue with it, like, oh yeah, I want to do this, but I want to use pipe prices in my country. Well, fine, take it down. Change the pipe file, right? Change one file, take whatever, 10 lines, right? So anybody could be able to do that. So you have the drop downs, okay, we didn't get to like, this is what to do then, okay, this is what we're really doing. And you have one more batch. Whatever was the CS, CSV files. Okay, these are some of them. I forgot what the other ones were. So what happens is, you you you do this, F1 and F2 are in the lines. T3 and t4 are in the lines, and the pressure drop is in the line. Like, those are all just look ups, 
+
+Ahliana Byrd  39:30  
+okay?
+
+Jack Kolar  39:31  
+These are calculations then, or they're also look ups from the amount of power. Okay. There is a room size set. There's a CSV for it, okay? Power room done, okay, from the room size, okay, I've done this in the XL, but I took three times the square root of the floor area. Okay, so if it's a 10, it was an eight by 10. What was the number? Wasn't easy one to do. So it was a 10 by 10 room, then the area is 100 Okay, so square root of 100 is 10. You can go with your inlet and outlet pipe in five feet, okay, and then you can come back out, okay. Like you can only go so far in the room. You can go this way, and you can go this way, and you go this way, okay, so if we came in up there, and then the machines over, here you go, this, this, and this, that's all pipe you can have in that room. So now you know the length of the pipe. So length of the pipe times the size, times the price of pipe. At that size, usually the cost of the pipe, okay, okay. And then there's a certain number of valves. I think there's like eight valves, valves of that pipe size, and there's a valve, CSV, okay, and then there's, now you've got the heat exchanger costs from up here, and I don't have the pump. I'm sorry. Pumps are still imaginary, because no pump vendor has done all that work, so we have to make it up, okay, in round numbers. Then if we add all those things up, round it to the nearest 1000, okay, so that we don't presume that we're doing real math.
+
+Jack Kolar  41:37  
+Some people think this is a plus or minus 40% exercise. And my argument to them is, no, I can do better than that in my head, so don't do that. So I'd like it to be plus or minus 15% percent, okay, but we'll probably want 25 Okay, so on $100,000 job, if you're estimating plus or minus 15% you're gonna round off to the next, probably in the next 5000 but round to round to 1000 is fine, okay, but if there's dollars and cents in there, people have argued with me about that already, because the original ones I left it in, but that's but that's what we're doing. If we get that far, then okay, then we probably need to talk somewhere, okay, all right, but, but the spreadsheet already does that. Okay. Do you have the spreadsheet? Yes, okay, I believe it's like you could dissect the spreadsheet and you can find all those things in it. 
+
+Ahliana Byrd  42:42  
+All right, okay, so let me build this first, and then we'll go to these. And the plan will be, I'll take a look at that, but I only want to get this built if i i want to get through the worksheets and the tests from my class. If I can do that, tonight, maybe tomorrow, I'd like to come back out here soon as I get those done, if I can maybe get back out here tomorrow,
+
+Jack Kolar  43:38  
+you probably mean Wednesday, because you've got other things due tomorrow morning. I do, you're right, then you're gonna eat your day up. Yeah. Okay, yeah. So you mean Wednesday, 
+
+Ahliana Byrd  43:49  
+I do, you're right, right.
+
+Jack Kolar  43:55  
+Wednesday, I have the 2:30 meeting. Okay, just double check my this is my best calendar. This is 26 oh, Wednesday. I also have lunch with somebody. Okay, so if you'd like, if you are able to come in the morning on Wednesday, that would be Su, 
+
+Ahliana Byrd  44:15  
+okay, let's plan on that,
+
+Jack Kolar  44:17  
+and you're sure welcome to stay as long as you want, and if you really like, if you're bored and you need to spend the rest of the giggling, you can sit in this chair, and I'll just kick it over in the corner, and you can watch the 230 meeting.
+
+Ahliana Byrd  44:33  
+Great. 
+
+Jack Kolar  44:37  
+Yeah, 
+
+Ahliana Byrd  44:38  
+Yeah, Wednesday. Oh, Wednesday morning. I have to take my dad for his CPAP appointment.
+
+Jack Kolar  44:43  
+Okay, I'm sorry I don't have that on this calendar. 
+
+Ahliana Byrd  44:45  
+It's okay. 
+
+Jack Kolar  44:47  
+So it kind of looks like we're closing in on Thursday. 
+
+Ahliana Byrd  44:49  
+Now let me Yeah, I his appointment is Wednesday morning, and you have, you said you have something Wednesday morning? Noon. Okay.
+
+Ahliana Byrd  45:09  
+Try to get my head together.
+
