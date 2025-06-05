@@ -57,31 +57,29 @@ def safe_import(module_path, function_names=None):
         print(f"❌ Error importing {module_path}: {e}")
         return None
 
+# Remove the create_working_functions since we're getting them from engineering_calculations
+
 def load_all_functions():
     """Load all the functions we need from the python modules"""
     print("🔧 Loading functions from python modules...")
     
     all_functions = {}
     
-    # Define what we want to import from where
-    imports = [
-        ('data.converter', ['universal_float_convert']),
-        ('physics.thermodynamics', ['get_MW_equivalent', 'get_MW_divd_equivalent']),
-        ('core.system_analysis', ['get_complete_system_analysis', 'validate_user_inputs']),
-        ('physics.engineering_calculations', ['datacenter_cooling_analysis', 'pipe_sizing_analysis', 'heat_exchanger_analysis']),
-    ]
+    # Import core data conversion function
+    core_functions = safe_import('data.converter', ['universal_float_convert'])
+    if core_functions:
+        all_functions.update(core_functions)
     
-    # Try each import
-    for module_path, function_names in imports:
-        functions = safe_import(module_path, function_names)
-        if functions:
-            all_functions.update(functions)
-    
-    # Handle name mappings (if functions have different names in modules)
-    if 'get_MW_equivalent' in all_functions:
-        all_functions['get_MW'] = all_functions['get_MW_equivalent']
-    if 'get_MW_divd_equivalent' in all_functions:
-        all_functions['get_MW_divd'] = all_functions['get_MW_divd_equivalent']
+    # Import all functions from engineering_calculations (including get_MW and get_MW_divd)
+    engineering_functions = safe_import('physics.engineering_calculations', [
+        'datacenter_cooling_analysis', 
+        'pipe_sizing_analysis', 
+        'heat_exchanger_analysis',
+        'get_MW',
+        'get_MW_divd'
+    ])
+    if engineering_functions:
+        all_functions.update(engineering_functions)
     
     print(f"📦 Loaded {len(all_functions)} functions total")
     return all_functions
@@ -100,16 +98,62 @@ def expose_to_notebook(functions):
         
         print(f"✅ Exposed {exposed_count} functions to notebook")
         
-        # Test one function to make sure it works
-        if 'universal_float_convert' in functions:
-            test_result = __main__.universal_float_convert("1,493")
-            print(f"✅ Test: universal_float_convert('1,493') = {test_result}")
+        # Test key functions to make sure they work
+        test_functions = ['universal_float_convert', 'get_MW', 'get_MW_divd']
+        for test_func in test_functions:
+            if test_func in functions:
+                try:
+                    if test_func == 'universal_float_convert':
+                        test_result = getattr(__main__, test_func)("1,493")
+                        print(f"✅ Test: {test_func}('1,493') = {test_result}")
+                    elif test_func in ['get_MW', 'get_MW_divd']:
+                        test_result = getattr(__main__, test_func)(1493, 20, 30)
+                        print(f"✅ Test: {test_func}(1493, 20, 30) = {test_result}")
+                except Exception as e:
+                    print(f"⚠️ Test failed for {test_func}: {e}")
         
         return True
         
     except Exception as e:
         print(f"❌ Failed to expose functions: {e}")
         return False
+
+def debug_notebook_namespace():
+    """Debug function to check what's available in the notebook"""
+    import __main__
+    
+    print("🔍 DEBUG: Notebook Namespace Analysis")
+    print("=" * 50)
+    
+    # Check for target functions
+    target_functions = ['universal_float_convert', 'get_MW', 'get_MW_divd']
+    
+    print(f"Target Function Check:")
+    for func_name in target_functions:
+        if hasattr(__main__, func_name):
+            func = getattr(__main__, func_name)
+            print(f"  ✅ {func_name}: {type(func)} (callable: {callable(func)})")
+            
+            # Test the function if it's callable
+            if callable(func):
+                try:
+                    if func_name == 'universal_float_convert':
+                        test_result = func("1,493")
+                        print(f"    Test result: {test_result}")
+                    elif func_name in ['get_MW', 'get_MW_divd']:
+                        test_result = func(1493, 20, 30)
+                        print(f"    Test result: {test_result}")
+                except Exception as e:
+                    print(f"    Test failed: {e}")
+        else:
+            print(f"  ❌ {func_name}: NOT FOUND")
+    
+    # Show all available functions
+    all_functions = [attr for attr in dir(__main__) 
+                    if not attr.startswith('_') and callable(getattr(__main__, attr, None))]
+    print(f"\nAll available functions: {', '.join(all_functions)}")
+    
+    return True
 
 def main():
     """Simple main function - do the work"""
@@ -126,11 +170,19 @@ def main():
         success = expose_to_notebook(functions)
         if success:
             print("🎉 Success! Functions are now available in your notebook.")
-            print(f"Available functions: {', '.join(functions.keys())}")
+            print(f"Available functions: {', '.join(sorted(functions.keys()))}")
         else:
             print("❌ Failed to expose functions to notebook")
     else:
         print("❌ No functions loaded")
+    
+    # 4. Make debug function available too
+    try:
+        import __main__
+        __main__.debug_notebook_namespace = debug_notebook_namespace
+        print("✅ Debug function available as debug_notebook_namespace()")
+    except:
+        pass
     
     return functions
 
