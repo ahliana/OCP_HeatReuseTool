@@ -545,14 +545,14 @@ def quick_power_calculation(flow_lpm: float, temp_rise_c: float, fluid: str = 'w
         raise ValueError("Only water implemented")
 
 
-def get_MW_equivalent(F1: float, T1: float, T2: float) -> float:
+def get_MW(F1: float, T1: float, T2: float) -> float:
     """Equivalent to original get_MW function using standard physics."""
     return quick_power_calculation(F1, T2 - T1)
 
 
-def get_MW_divd_equivalent(F1: float, T1: float, T2: float) -> float:
+def get_MW_divd(F1: float, T1: float, T2: float) -> float:
     """Equivalent to original get_MW_divd function."""
-    return get_MW_equivalent(F1, T1, T2) / 1_000_000
+    return get_MW(F1, T1, T2) / 1_000_000
 
 
 # =============================================================================
