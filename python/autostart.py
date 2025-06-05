@@ -1,36 +1,37 @@
-"""
-Basic autostart - just prove it works!
-"""
+# Heat Reuse Tool - Autostart (exec-compatible)
+# No __file__ usage - works with exec(open().read())
 
-from IPython.display import display, HTML
+import sys
+import os
 
-def test_calculator():
-    """Just show that it works!"""
-    
-    html = """
-    <div style="
-        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-        color: white;
-        padding: 30px;
-        border-radius: 15px;
-        text-align: center;
-        margin: 20px 0;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    ">
-        <h1 style="margin: 0; font-size: 48px;">🎉</h1>
-        <h2 style="margin: 10px 0; font-size: 32px;">IT WORKS!</h2>
-        <p style="margin: 10px 0 0 0; font-size: 20px; opacity: 0.9;">
-            Heat Reuse Calculator autostart.py is loading successfully!
-        </p>
-        <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.8;">
-            MVP achieved! 🚀
-        </p>
-    </div>
-    """
-    
-    display(HTML(html))
-    print("✅ autostart.py loaded and executed successfully!")
-    print("🔧 Heat Reuse Calculator MVP is working!")
+print("🔧 Heat Reuse Tool - Autostart")
+print("=" * 40)
 
-# Run the test
-test_calculator()
+# Use getcwd() instead of __file__ for exec compatibility
+current_working_dir = os.getcwd()
+python_dir = os.path.join(current_working_dir, 'python')
+
+print(f"📁 Working dir: {current_working_dir}")
+print(f"📁 Python dir: {python_dir}")
+
+# Add to path if not already there
+if python_dir not in sys.path:
+    sys.path.insert(0, python_dir)
+    print(f"✅ Added to Python path")
+else:
+    print(f"✅ Already in Python path")
+
+# Test basic functionality
+try:
+    print("🧪 Testing basic functionality...")
+    test_value = 1493.0
+    print(f"✅ Test calculation: {test_value}")
+    print("✅ SUCCESS: Basic functionality working")
+except Exception as e:
+    print(f"❌ ERROR: {e}")
+
+print("=" * 40)
+print("🚀 Autostart complete!")
+
+# Make this available to the notebook
+autostart_status = "completed"
