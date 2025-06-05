@@ -18,6 +18,7 @@ Version: 1.0
 """
 
 from .constants import *
+from .engineering_calculations import *
 from .thermodynamics import *
 from .fluid_mechanics import *
 from .heat_transfer import *
