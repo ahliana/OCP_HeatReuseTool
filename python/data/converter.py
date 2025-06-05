@@ -10,12 +10,13 @@ import re
 import math
 import pandas as pd
 
+
 def universal_float_convert(value):
     """
-    CORRECTED European-priority universal number parser
+    European-priority universal number parser
     Handles both American and European CSV data formats correctly
     
-    Key fix: Properly detects American thousands separators (comma + exactly 3 digits)
+    Properly detects American thousands separators (comma + exactly 3 digits)
     vs European decimal separators
     
     Args:
@@ -32,7 +33,6 @@ def universal_float_convert(value):
         >>> universal_float_convert("€1,375.2")  # Currency
         1375.2
     """
-    
     # Handle None, NaN, and empty values
     if value is None:
         return 0.0
@@ -177,12 +177,15 @@ def universal_float_convert(value):
                     # AMERICAN THOUSANDS: 1,493 or 12,345 (comma + exactly 3 digits)
                     # This is definitely a thousands separator, not decimal
                     result = float(integer_part + fractional_part)
+                    print(f"🔍 Detected American thousands: {str_val} → {result}")
                 elif len(fractional_part) <= 2:
                     # European decimal: 1,5 or 123,45 (comma + 1-2 digits)
                     result = float(integer_part + '.' + fractional_part)
+                    print(f"🔍 Detected European decimal: {str_val} → {result}")
                 elif len(fractional_part) > 3:
                     # 4+ digits after comma: definitely decimal (European style)
                     result = float(integer_part + '.' + fractional_part)
+                    print(f"🔍 Detected European long decimal: {str_val} → {result}")
                 else:
                     # Fallback for edge cases
                     result = float(integer_part + fractional_part)  # Treat as thousands
@@ -200,12 +203,15 @@ def universal_float_convert(value):
                     if len(integer_part) >= 4:
                         # Likely European thousands: 1234.567 → 1234567
                         result = float(integer_part + fractional_part)
+                        print(f"🔍 Detected European thousands: {str_val} → {result}")
                     else:
                         # Likely American decimal: 12.345
                         result = float(str_val)
+                        print(f"🔍 Detected American decimal: {str_val} → {result}")
                 elif len(fractional_part) <= 2:
                     # Standard decimal: 12.34
                     result = float(str_val)
+                    print(f"🔍 Detected standard decimal: {str_val} → {result}")
                 else:
                     # Default to decimal for unclear cases
                     result = float(str_val)
@@ -220,11 +226,13 @@ def universal_float_convert(value):
                 before = str_val[:last_comma].replace('.', '').replace(',', '').replace(' ', '').replace('\'', '')
                 after = str_val[last_comma + 1:]
                 result = float(f"{before}.{after}")
+                print(f"🔍 Detected European mixed format: {str_val} → {result}")
             else:
                 # Dot is last = decimal separator (American)
                 before = str_val[:last_dot].replace('.', '').replace(',', '').replace(' ', '').replace('\'', '')
                 after = str_val[last_dot + 1:]
                 result = float(f"{before}.{after}")
+                print(f"🔍 Detected American mixed format: {str_val} → {result}")
         
         # STRATEGY 6: Fallback
         else:
@@ -232,6 +240,7 @@ def universal_float_convert(value):
             digits_only = re.sub(r'[^\d]', '', str_val)
             if digits_only:
                 result = float(digits_only)
+                print(f"🔍 Fallback digits only: {str_val} → {result}")
             else:
                 return 0.0
         
