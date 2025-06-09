@@ -26,10 +26,30 @@ def quick_power_calculation(flow_lpm: float, temp_rise_c: float, fluid: str = 'w
 
 
 def get_MW(F1: float, T1: float, T2: float) -> float:
-    """Equivalent to original get_MW function using standard physics."""
     return quick_power_calculation(F1, T2 - T1)
 
 
 def get_MW_divd(F1: float, T1: float, T2: float) -> float:
-    """Equivalent to original get_MW_divd function."""
     return get_MW(F1, T1, T2) / 1_000_000
+
+def get_DeltaT_TCS(T1, T2):
+    try:
+        return float(T2) - float(T1)
+    except Exception as e:
+        return 0.0
+    
+def get_DeltaT_FWS(T3, T4):
+    try:
+        return float(T3) - float(T4)
+    except Exception as e:
+        return 0.0
+
+def get_Approach(T1, T4):
+    """Calculate approach temperature"""
+    try:
+        return float(T4) - float(T1)
+    except Exception as e:
+        print(f"❌ Error in get_Approach: {e}")
+        return 0.0
+
+
