@@ -662,48 +662,6 @@ def validate_thermodynamics_module() -> List[Dict[str, any]]:
     return results
 
 
-# =============================================================================
-# COMPATIBILITY FUNCTIONS
-# =============================================================================
-
-def get_MW_equivalent(F1: Union[str, float], T1: Union[str, float], T2: Union[str, float]) -> float:
-    """
-    Equivalent to the original get_MW function using standard thermodynamics.
-    Handles European number formats automatically.
-    
-    Args:
-        F1: Flow rate [L/min] (handles European format like "1,493")
-        T1: Inlet temperature [°C] (handles European format like "20,5")
-        T2: Outlet temperature [°C]
-    
-    Returns:
-        float: Power [W]
-        
-    Example:
-        >>> get_MW_equivalent("1,493", 20, 30)  # European format
-        1041616.67
-    """
-    return power_from_heat_flow(F1, T1, T2)
-
-
-def get_MW_divd_equivalent(F1: Union[str, float], T1: Union[str, float], T2: Union[str, float]) -> float:
-    """
-    Equivalent to the original get_MW_divd function.
-    Returns power in MW with European number handling.
-    
-    Args:
-        F1: Flow rate [L/min]
-        T1: Inlet temperature [°C]
-        T2: Outlet temperature [°C]
-    
-    Returns:
-        float: Power [MW]
-        
-    Example:
-        >>> get_MW_divd_equivalent("1,493", 20, 30)
-        1.04
-    """
-    return power_from_heat_flow(F1, T1, T2) / 1_000_000
 
 
 # =============================================================================

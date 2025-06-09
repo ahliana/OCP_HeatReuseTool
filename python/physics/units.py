@@ -23,26 +23,9 @@ from typing import Union, Dict, Tuple, Optional
 try:
     from .constants import CONVERSION_FACTORS, WATER_PROPERTIES
 except ImportError:
-    # Fallback constants if constants module not available
-    CONVERSION_FACTORS = {
-        'celsius_to_kelvin': 273.15,
-        'fahrenheit_offset': 32.0,
-        'fahrenheit_scale': 5.0/9.0,
-        'liters_to_m3': 1e-3,
-        'minutes_to_seconds': 60.0,
-        'gpm_to_m3_per_s': 6.30902e-5,
-        'cfm_to_m3_per_s': 4.71947e-4,
-        'watts_to_megawatts': 1e-6,
-        'watts_to_btu_per_hour': 3.41214,
-        'btu_per_hour_to_watts': 0.293071,
-        'watts_to_tons_refrigeration': 2.84345e-4,
-        'pa_to_psi': 1.45038e-4,
-        'psi_to_pa': 6894.76,
-        'bar_to_pa': 1e5,
-        'mm_to_m': 1e-3,
-        'inches_to_m': 0.0254,
-        'feet_to_m': 0.3048,
-    }
+    # Don't define functions if imports fail
+    raise ImportError(f"Cannot import required physics modules: {e}")
+
 
 # =============================================================================
 # TEMPERATURE CONVERSIONS (EUROPEAN-FIRST)

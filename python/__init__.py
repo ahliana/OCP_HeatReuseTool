@@ -18,23 +18,22 @@ def _post_autostart_setup():
     try:
         from .core.system_analysis import get_complete_system_analysis
         from .data.converter import universal_float_convert
-        from .physics.thermodynamics import get_MW_divd, get_PipeSize_Suggested
+        from .core import get_MW, get_MW_divd
+        from .physics.thermodynamics import get_PipeSize_Suggested
         from .ui.interface import create_heat_reuse_tool
         
         # Engineering calculations functions
         from .engineering_calculations import (
             datacenter_cooling_analysis,
             pipe_sizing_analysis, 
-            heat_exchanger_analysis,
-            quick_power_calculation,
-            get_MW_equivalent,
-            get_MW_divd_equivalent
+            heat_exchanger_analysis
         )
         
         # Make them available at package level
         globals().update({
             'get_complete_system_analysis': get_complete_system_analysis,
             'universal_float_convert': universal_float_convert,
+            'get_MW': get_MW,
             'get_MW_divd': get_MW_divd,
             'get_PipeSize_Suggested': get_PipeSize_Suggested,
             'create_heat_reuse_tool': create_heat_reuse_tool,
@@ -42,10 +41,7 @@ def _post_autostart_setup():
             # Engineering functions
             'datacenter_cooling_analysis': datacenter_cooling_analysis,
             'pipe_sizing_analysis': pipe_sizing_analysis,
-            'heat_exchanger_analysis': heat_exchanger_analysis,
-            'quick_power_calculation': quick_power_calculation,
-            'get_MW_equivalent': get_MW_equivalent,
-            'get_MW_divd_equivalent': get_MW_divd_equivalent,
+            'heat_exchanger_analysis': heat_exchanger_analysis
         })
         
         print("✅ Heat Reuse Tool loaded successfully!")
