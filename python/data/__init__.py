@@ -1,15 +1,25 @@
-# Data handling modules
-"""
-Data handling components for the Heat Reuse Tool.
 
-This module provides:
-- Data type conversion utilities
-- CSV file loading and management  
-- Data validation functions
-"""
-
+from .loader import load_csv_files, get_csv_data, is_csv_loaded, list_loaded_csvs
 from .converter import universal_float_convert
 
+# Auto-load CSV files when module is imported
+import os
+
+# Try to load CSV files automatically
+if os.path.exists("Data"):
+    print("🔧 Auto-loading CSV files...")
+    load_csv_files("Data")
+elif os.path.exists("../Data"):
+    print("🔧 Auto-loading CSV files from parent directory...")
+    load_csv_files("../Data")
+else:
+    print("⚠️ CSV data directory not found. Please load manually with load_csv_files()")
+
 __all__ = [
-    'universal_float_convert',
+    'load_csv_files',
+    'get_csv_data', 
+    'is_csv_loaded',
+    'list_loaded_csvs',
+    'universal_float_convert'
 ]
+
