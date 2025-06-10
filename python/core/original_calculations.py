@@ -174,6 +174,129 @@ def get_PipeLength(F1, T1, T2):
 def get_PipeCost_perMeter(flow_rate, pipe_type="sched40"):
     """
     Get pipe cost per meter based on flow rate and pipe type.
+    European-first approach using DN sizes with conversion to match cost data.
+    """
+    try:
+        # First get European DN pipe size from PIPSZ
+        dn_size = get_PipeSize_Suggested(flow_rate)
+        if dn_size == 0:
+            print("❌ No suitable pipe size found")
+            return 0
+        
+        print(f"🔍 European pipe sizing: DN{dn_size} for flow {flow_rate} L/min")
+        
+        # Check if PIPCOST data exists
+        if not is_csv_loaded('PIPCOST'):
+            print("❌ PIPCOST CSV not found")
+            return 0
+        
+        # Get cost data
+        pipcost_df = get_csv_data('PIPCOST')
+        if pipcost_df is None:
+            return 0
+            
+        # Convert to numeric
+        pipcost_df = pipcost_df.copy()
+        pipcost_df.iloc[:, 0] = pipcost_df.iloc[:, 0].apply(universal_float_convert)  # Pipe size
+        
+        # Determine column index based on pipe type
+        col_index = 1 if pipe_type.lower() == "sched40" else 2
+        pipcost_df.iloc[:, col_index] = pipcost_df.iloc[:, col_index].apply(universal_float_convert)
+        
+        # Convert European DN size to match PIPCOST data format
+        # Option 1: Try direct DN match first
+        matching_rows = pipcost_df[pipcost_df.iloc[:, 0] == dn_size]
+        
+        if not matching_rows.empty:
+            # Direct DN match found
+            cost = matching_rows.iloc[0, col_index]
+            print(f"✅ Direct DN match: DN{dn_size} → €{cost}/m")
+            return cost
+        
+        # Option 2: Convert DN to American inches using units.py conversion
+        try:
+            from units import dn_to_nominal_inches
+            american_inches = dn_to_nominal_inches(dn_size)
+            
+            if american_inches:
+                # Try to find the converted size in PIPCOST
+                matching_rows = pipcost_df[pipcost_df.iloc[:, 0] == american_inches]
+                
+                if not matching_rows.empty:
+                    cost = matching_rows.iloc[0, col_index]
+                    print(f"✅ Converted match: DN{dn_size} → {american_inches}\" → €{cost}/m")
+                    return cost
+                    
+        except ImportError:
+            print("⚠️ Units conversion module not available")
+        
+        # Option 3: European engineering fallback mapping
+        # Based on standard DN to inch conversions
+        european_to_cost_mapping = {
+            100: 4,    # DN100 ≈ 4" (102.3mm inner diameter)
+            160: 6,    # DN160 ≈ 6" (closest to 154.1mm)
+            200: 8,    # DN200 ≈ 8" (202.7mm inner diameter)
+            250: 10,   # DN250 ≈ 10" (254.5mm inner diameter)
+            315: 12,   # DN315 ≈ 12" (closest to 303.2mm)
+            350: 14,   # DN350 ≈ 14" (closest to 333.3mm)
+            400: 16,   # DN400 ≈ 16" (closest to 381.0mm)
+        }
+        
+        mapped_size = european_to_cost_mapping.get(dn_size)
+        if mapped_size:
+            matching_rows = pipcost_df[pipcost_df.iloc[:, 0] == mapped_size]
+            
+            if not matching_rows.empty:
+                cost = matching_rows.iloc[0, col_index]
+                print(f"✅ Engineering mapping: DN{dn_size} → {mapped_size}\" → €{cost}/m")
+                return cost
+        
+        # Option 4: Find closest available size as engineering fallback
+        available_sizes = pipcost_df.iloc[:, 0].values
+        
+        # Use European DN standards to find closest match
+        try:
+            from units import european_dn_pipe_sizes
+            dn_inner_diameter = european_dn_pipe_sizes().get(dn_size, dn_size)
+            
+            # Convert available inch sizes to mm for comparison
+            from units import american_nominal_pipe_sizes
+            american_sizes = american_nominal_pipe_sizes()
+            
+            closest_size = None
+            min_difference = float('inf')
+            
+            for inch_size in available_sizes:
+                if inch_size in american_sizes:
+                    inch_diameter_mm = american_sizes[inch_size]
+                    difference = abs(dn_inner_diameter - inch_diameter_mm)
+                    
+                    if difference < min_difference:
+                        min_difference = difference
+                        closest_size = inch_size
+            
+            if closest_size:
+                matching_rows = pipcost_df[pipcost_df.iloc[:, 0] == closest_size]
+                cost = matching_rows.iloc[0, col_index]
+                print(f"✅ Closest engineering match: DN{dn_size} ({dn_inner_diameter}mm) → {closest_size}\" → €{cost}/m")
+                return cost
+                
+        except ImportError:
+            print("⚠️ European pipe standards not available")
+        
+        # Final fallback - use median cost
+        median_cost = pipcost_df.iloc[:, col_index].median()
+        print(f"⚠️ Using median cost fallback for DN{dn_size}: €{median_cost}/m")
+        return median_cost
+        
+    except Exception as e:
+        print(f"❌ Error in get_PipeCost_perMeter: {e}")
+        return 0
+
+
+def get_PipeCost_perMeter_Old(flow_rate, pipe_type="sched40"):
+    """
+    Get pipe cost per meter based on flow rate and pipe type.
     """
     try:
         # First get pipe size
