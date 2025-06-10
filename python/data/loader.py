@@ -74,9 +74,8 @@ def get_csv_data(csv_name: str) -> Optional[pd.DataFrame]:
     
     # Check if the CSV has been loaded
     if csv_name not in csv_data:
-        print(f"❌ CSV '{csv_name}' not found. Available CSVs: {list(csv_data.keys())}")
-        return None
-    
+        available = list(csv_data.keys())
+        raise ValueError(f"❌ CSV '{csv_name}' not loaded. Available CSVs: {available}")
     return csv_data[csv_name]
 
 def is_csv_loaded(csv_name: str) -> bool:
@@ -86,3 +85,16 @@ def is_csv_loaded(csv_name: str) -> bool:
 def list_loaded_csvs() -> list:
     """Get list of all loaded CSV names."""
     return list(csv_data.keys())
+
+def validate_required_csvs(required_csvs: list) -> bool:
+    """Validate that all required CSV files are loaded."""
+    missing = []
+    for csv_name in required_csvs:
+        if not is_csv_loaded(csv_name):
+            missing.append(csv_name)
+    
+    if missing:
+        available = list_loaded_csvs()
+        raise ValueError(f"❌ Missing required CSV files: {missing}. Available: {available}")
+    
+    return True
