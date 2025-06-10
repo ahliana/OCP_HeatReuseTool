@@ -96,37 +96,13 @@ def create_output_areas():
         'charts': widgets.Output()          # This will include gauges
     }
 
-# def create_interface_layout(widgets_dict, outputs_dict):
-#     """
-#     Create the main interface layout with proper spacing.
-#     """
-    # # Input section with spacing
-    # input_section = widgets.VBox([
-    #     widgets_dict['power_widget'],
-    #     widgets_dict['t1_widget'], 
-    #     widgets_dict['temp_diff_widget'],
-    #     widgets_dict['approach_widget'],
-    #     widgets_dict['calculate_button']
-    # ], layout=widgets.Layout(margin='20px'))  # Add margin
-    
-    # # Output sections with spacing between them
-    # output_section = widgets.VBox([
-    #     outputs_dict['system_params'],      # System Parameters
-    #     outputs_dict['cost_analysis'],      # Cost Analysis + Recommendations
-    #     outputs_dict.get('visual_summary', widgets.Output()),  # Visual Summary (if exists)
-    #     outputs_dict['charts']              # Charts
-    # ], layout=widgets.Layout(margin='20px 0'))  # Add margin
-    
-    # return widgets.HBox([
-    #     input_section, 
-    #     output_section
-    # ], layout=widgets.Layout(margin='10px'))  # Overall margin
+
 def create_interface_layout(widgets_dict, outputs_dict):
     """
-    Create the main interface layout - restore input arrangement.
+    Create the main interface layout - everything stacked vertically.
     """
-    # Input section - restore 2x2 grid arrangement  
-    input_section = widgets.VBox([
+    # Input section - 2x2 grid for the dropdowns
+    input_grid = widgets.VBox([
         widgets.HBox([
             widgets_dict['power_widget'],
             widgets_dict['t1_widget']
@@ -134,19 +110,18 @@ def create_interface_layout(widgets_dict, outputs_dict):
         widgets.HBox([
             widgets_dict['temp_diff_widget'],
             widgets_dict['approach_widget']
-        ]),
-        widgets_dict['calculate_button']
-    ], layout=widgets.Layout(width='450px'))
-    
-    # Output sections
-    output_section = widgets.VBox([
-        outputs_dict['system_params'],      
-        outputs_dict['cost_analysis'],      
-        outputs_dict.get('visual_summary', widgets.Output()),  
-        outputs_dict['charts']              
+        ])
     ])
     
-    return widgets.HBox([input_section, output_section])
+    # Complete vertical layout: inputs, button, then all outputs
+    return widgets.VBox([
+        input_grid,                                           # Power/T1, TempRise/Approach
+        widgets_dict['calculate_button'],                     # Calculate button
+        outputs_dict['system_params'],                        # System Parameters (below button)
+        outputs_dict['cost_analysis'],                        # Cost Analysis + Smart Recommendations
+        outputs_dict.get('visual_summary', widgets.Output()), # System Overview Cards  
+        outputs_dict['charts']                                # Charts
+    ], layout=widgets.Layout(margin='10px'))
 
 # =============================================================================
 # WIDGET VALUE EXTRACTION
