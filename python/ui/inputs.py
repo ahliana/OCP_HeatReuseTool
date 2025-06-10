@@ -171,13 +171,13 @@ def get_widget_values(widgets_dict):
 
 def clear_all_outputs(outputs_dict):
     """
-    Clear all output areas.
+    Clear all output areas completely.
     
     Args:
         outputs_dict: Dictionary of output widgets
     """
-    for output in outputs_dict.values():
-        output.clear_output()
+    for output_name, output_widget in outputs_dict.items():
+        output_widget.clear_output(wait=True)  # wait=True ensures complete clearing
 
 # =============================================================================
 # WIDGET CONFIGURATION HELPERS

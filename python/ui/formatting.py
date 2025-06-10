@@ -444,6 +444,33 @@ def generate_performance_rating(cost_per_mw, effectiveness):
         'cost_score': cost_score,
         'eff_score': eff_score
     }
+    
+def calculate_effectiveness(analysis):
+    """
+    Calculate real heat exchanger effectiveness from system parameters.
+    
+    Args:
+        analysis: System analysis dictionary
+    
+    Returns:
+        Float: Effectiveness value (0.0 to 1.0)
+    """
+    # Import the heat exchanger function
+    from physics.heat_exchangers import heat_exchanger_for_heat_reuse_tool
+    
+    # Extract parameters
+    system = analysis['system']
+    F1 = system['F1']  # TCS flow
+    F2 = system['F2']  # FWS flow  
+    T1 = system['T1']  # TCS inlet
+    T2 = system['T2']  # TCS outlet
+    T3 = system['T3']  # FWS outlet
+    T4 = system['T4']  # FWS inlet
+    
+    # Calculate real effectiveness
+    hx_analysis = heat_exchanger_for_heat_reuse_tool(F1, F2, T1, T2, T3, T4)
+    
+    return hx_analysis['effectiveness']
 
 def create_summary_cards_html(power, total_cost, cost_per_mw, effectiveness, rating_info, eu_compliant):
     """

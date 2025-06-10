@@ -4,16 +4,17 @@ Extracted from Interactive Analysis Tool.ipynb
 """
 
 from IPython.display import display, HTML
+import matplotlib.pyplot as plt  # Add this line
 from .config import OUTPUT_CONFIG
 from .formatting import (
     create_result_html, create_error_html, create_validation_errors_html,
     extract_formatted_system_params, extract_formatted_cost_analysis, 
     extract_delta_t_values,
-    generate_smart_insights, generate_performance_rating,  # Add these
-    create_recommendations_html, create_summary_cards_html  # Add these too
+    generate_smart_insights, generate_performance_rating,
+    create_recommendations_html, create_summary_cards_html,
+    calculate_effectiveness 
 )
 from .charts import create_system_charts
-
 
 # =============================================================================
 # MAIN OUTPUT DISPLAY FUNCTIONS
@@ -90,15 +91,23 @@ def display_cost_analysis(output_area, analysis):
 
 def display_charts(output_area, analysis):
     """
-    Display system analysis charts.
+    Display charts with guaranteed fresh creation.
     
     Args:
         output_area: Output widget to display in
         analysis: Complete system analysis dictionary
     """
+    # Double-clear to ensure fresh start
+    output_area.clear_output()
+    
     with output_area:
         try:
+            # Force matplotlib to close any existing figures
+            plt.close('all')
+            
+            # Create fresh charts
             create_system_charts(analysis)
+            
         except Exception as e:
             display_error(output_area, f"Error creating charts: {str(e)}")
 
@@ -412,7 +421,7 @@ def display_visual_summary_cards(output_area, analysis):
             cost_per_mw = total_cost / power
             
             # Get effectiveness estimate
-            effectiveness = analysis.get('validation', {}).get('hx_effectiveness', 0.75)
+            effectiveness = calculate_effectiveness(analysis)
             
             # Generate performance rating
             rating_info = generate_performance_rating(cost_per_mw, effectiveness)

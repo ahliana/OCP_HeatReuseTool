@@ -4,8 +4,9 @@ Extracted from Interactive Analysis Tool.ipynb
 """
 
 import matplotlib.pyplot as plt
+import numpy as np  # Also needed for the effectiveness gauge
 from .config import CHART_CONFIG
-from .formatting import format_display_value, safe_float_convert
+from .formatting import format_display_value, safe_float_convert, calculate_effectiveness 
 
 # =============================================================================
 # MAIN CHART CREATION FUNCTION
@@ -41,7 +42,7 @@ def create_system_charts(analysis):
         create_approach_profiles_chart(axs[1, 0], system)
         
         # New performance gauge
-        effectiveness = analysis.get('validation', {}).get('hx_effectiveness', 0.75)
+        effectiveness = calculate_effectiveness(analysis)
         create_effectiveness_gauge(axs[1, 1], effectiveness)
         
         # New cost efficiency chart
@@ -58,25 +59,7 @@ def create_system_charts(analysis):
     except Exception as e:
         print(f"Chart creation error: {str(e)}")
         create_error_chart(str(e))
-        
-        # # Create each chart based on configuration
-        # create_temperature_chart(axs[0, 0], system)
-        # create_flow_rates_chart(axs[0, 1], system)
-        # create_cost_breakdown_chart(axs[1, 0], costs)
-        # create_system_metrics_chart(axs[1, 1], system, sizing)
-        
-        # # Create approach profiles chart
-        # create_approach_profiles_chart(axs[2, 0], system)
-        
-        # # Create efficiency comparison chart in the remaining space
-        # create_efficiency_chart(axs[2, 1], system, costs)
-        
-        # # Set overall title
-        # power_display = format_display_value(float(system['power']), 'temperature', False)
-        # title_template = CHART_CONFIG['charts']['system_metrics'].get('title_template', 
-        #                 'Heat Reuse System Analysis - {power}MW System')
-        # plt.suptitle(title_template.format(power=power_display), 
-        #             fontsize=16, fontweight='bold')
+
         
         
 
