@@ -435,12 +435,12 @@ def create_approach_profiles_chart(ax, system_data):
         # Plot TCS approach profile (internal system)
         ax.plot(time_percent, tcs['temperatures'], 
                color='#ff6666', linewidth=3, marker='o', markersize=4,
-               label=f'TCS Internal ({tcs["start_temp"]:.0f}°C → {tcs["target_temp"]:.0f}°C)')
+               label=f'TCS ({tcs["start_temp"]:.0f}°C → {tcs["target_temp"]:.0f}°C)')
         
         # Plot FWS approach profile (external system)
         ax.plot(time_percent, fws['temperatures'], 
                color='#66b3ff', linewidth=3, marker='s', markersize=4,
-               label=f'FWS External ({fws["start_temp"]:.0f}°C → {fws["target_temp"]:.0f}°C)')
+               label=f'FWS ({fws["start_temp"]:.0f}°C → {fws["target_temp"]:.0f}°C)')
         
         # Chart styling
         ax.set_title('System Approach Profiles', fontsize=14, fontweight='bold')
