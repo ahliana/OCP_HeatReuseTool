@@ -116,8 +116,8 @@ VALIDATION_RULES = {
 
 CHART_CONFIG = {
     'layout': {
-        'figure_size': (14, 10),
-        'subplot_rows': 2,
+        'figure_size': (14, 14),  
+        'subplot_rows': 3,        
         'subplot_cols': 2,
         'style': 'ggplot'
     },
@@ -139,7 +139,7 @@ CHART_CONFIG = {
             'labels': ['F1\\n(TCS Flow)', 'F2\\n(FWS Flow)']
         },
         'cost_breakdown': {
-            'type': 'pie',  # Changed from bar to pie for total cost
+            'type': 'pie',
             'title': 'Cost Breakdown',
             'colors': ['#ffcc99', '#ff9999', '#cc99ff', '#99ccff', '#ffff99'],
             'position': (1, 0),
@@ -153,9 +153,27 @@ CHART_CONFIG = {
             'colors': ['#ff6666', '#66ff66', '#6666ff', '#ffcc66'],
             'position': (1, 1),
             'labels': ['Power\\n(MW)', 'Temp Rise\\n(°C)', 'Pipe Size', 'Room Size\\n(m)']
+        },
+        'approach_profiles': {
+            'type': 'line',
+            'title': 'TCS/FWS Approach Profiles',
+            'ylabel': 'Temperature (°C)',
+            'xlabel': 'Process Completion (%)',
+            'colors': ['#ff6666', '#66b3ff'],
+            'position': (2, 0),
+            'labels': ['TCS Internal', 'FWS External']
+        },
+        'efficiency_metrics': {
+            'type': 'bar',
+            'title': 'System Efficiency Metrics',
+            'ylabel': 'Efficiency Values',
+            'colors': ['#ff9999', '#99ff99', '#9999ff'],
+            'position': (2, 1),
+            'labels': ['Cost/MW', 'Cost/Flow', 'Flow/MW']
         }
     }
 }
+
 
 # =============================================================================
 # ERROR AND SUCCESS MESSAGE STYLING

@@ -14,6 +14,7 @@ from .formatting import format_display_value, safe_float_convert
 def create_system_charts(analysis):
     """
     Create visualization charts for the system analysis with configurable layouts.
+    Now includes approach profiles chart.
     
     Args:
         analysis: Complete system analysis dictionary
@@ -22,12 +23,11 @@ def create_system_charts(analysis):
         None (displays charts)
     """
     try:
-        # Get layout configuration
+        # Get layout configuration - expand to 2x3 grid for approach profiles
         layout = CHART_CONFIG['layout']
         fig, axs = plt.subplots(
-            layout['subplot_rows'], 
-            layout['subplot_cols'], 
-            figsize=layout['figure_size']
+            3, 2,  # Changed to 3 rows, 2 columns for new chart
+            figsize=(layout['figure_size'][0], layout['figure_size'][1] + 4)  # Make taller
         )
         
         # Apply matplotlib style
@@ -43,6 +43,12 @@ def create_system_charts(analysis):
         create_flow_rates_chart(axs[0, 1], system)
         create_cost_breakdown_chart(axs[1, 0], costs)
         create_system_metrics_chart(axs[1, 1], system, sizing)
+        
+        # NEW: Create approach profiles chart
+        create_approach_profiles_chart(axs[2, 0], system)
+        
+        # Create efficiency comparison chart in the remaining space
+        create_efficiency_chart(axs[2, 1], system, costs)
         
         # Set overall title
         power_display = format_display_value(float(system['power']), 'temperature', False)
@@ -369,3 +375,140 @@ def save_charts_to_file(analysis, filename='heat_reuse_charts.png', dpi=300):
         
     except Exception as e:
         return f"Error saving charts: {str(e)}"
+
+    
+# Approach charting
+
+def create_system_metrics_chart(ax, system_data, sizing_data):
+    """Create system summary metrics chart."""
+    config = CHART_CONFIG['charts']['system_metrics']
+    
+    # Prepare data
+    metric_values = [
+        float(system_data['power']),
+        float(system_data['T2']) - float(system_data['T1']),
+        float(sizing_data['primary_pipe_size']),
+        float(sizing_data['room_size'])
+    ]
+    
+    # Create chart
+    bars = ax.bar(config['labels'], metric_values, color=config['colors'])
+    ax.set_title(config['title'], fontsize=14, fontweight='bold')
+    ax.set_ylabel(config['ylabel'])
+    
+    # Add metric labels with appropriate formatting
+    metric_rounding_types = ['temperature', 'temperature', 'pipe_size', 'room_size']
+    metric_units = ['', '°C', '', 'm']
+    for i, (v, rounding_type, unit) in enumerate(zip(metric_values, metric_rounding_types, metric_units)):
+        display_value = format_display_value(v, rounding_type, False)
+        label = f"{display_value}{unit}" if unit else display_value
+        ax.text(i, v + max(metric_values)*0.02, label, ha='center', fontweight='bold')
+
+def create_approach_profiles_chart(ax, system_data):
+    """
+    Create CDU-style approach profiles chart showing TCS and FWS trajectories.
+    
+    Args:
+        ax: Matplotlib axis to plot on
+        system_data: System analysis data dictionary
+    """
+    try:
+        # Import the approach calculation functions
+        from core.original_calculations import calculate_combined_approach_profiles
+        
+        # Calculate approach profiles
+        profiles = calculate_combined_approach_profiles(system_data)
+        
+        if not profiles or not profiles['tcs_profile'] or not profiles['fws_profile']:
+            ax.text(0.5, 0.5, 'Approach Profile Data\nNot Available', 
+                   ha='center', va='center', fontsize=12, 
+                   bbox=dict(boxstyle="round,pad=0.3", facecolor="lightgray"))
+            ax.set_title('Approach Profiles', fontsize=14, fontweight='bold')
+            return
+        
+        tcs = profiles['tcs_profile']
+        fws = profiles['fws_profile']
+        
+        # Convert time progression to percentage for x-axis
+        time_percent = [t * 100 for t in tcs['time_progression']]
+        
+        # Plot TCS approach profile (internal system)
+        ax.plot(time_percent, tcs['temperatures'], 
+               color='#ff6666', linewidth=3, marker='o', markersize=4,
+               label=f'TCS Internal ({tcs["start_temp"]:.0f}°C → {tcs["target_temp"]:.0f}°C)')
+        
+        # Plot FWS approach profile (external system)
+        ax.plot(time_percent, fws['temperatures'], 
+               color='#66b3ff', linewidth=3, marker='s', markersize=4,
+               label=f'FWS External ({fws["start_temp"]:.0f}°C → {fws["target_temp"]:.0f}°C)')
+        
+        # Chart styling
+        ax.set_title('System Approach Profiles', fontsize=14, fontweight='bold')
+        ax.set_xlabel('Process Completion (%)')
+        ax.set_ylabel('Temperature (°C)')
+        ax.grid(True, alpha=0.3)
+        ax.legend(loc='best')
+        
+        # Add annotations for key points
+        ax.annotate(f'TCS Start\n{tcs["start_temp"]:.0f}°C', 
+                   xy=(0, tcs['temperatures'][0]), xytext=(10, tcs['temperatures'][0] + 1),
+                   arrowprops=dict(arrowstyle='->', color='#ff6666', alpha=0.7),
+                   fontsize=9, ha='left')
+        
+        ax.annotate(f'FWS Start\n{fws["start_temp"]:.0f}°C', 
+                   xy=(0, fws['temperatures'][0]), xytext=(10, fws['temperatures'][0] - 1),
+                   arrowprops=dict(arrowstyle='->', color='#66b3ff', alpha=0.7),
+                   fontsize=9, ha='left')
+        
+        # Set reasonable y-axis limits
+        all_temps = tcs['temperatures'] + fws['temperatures']
+        temp_range = max(all_temps) - min(all_temps)
+        ax.set_ylim(min(all_temps) - temp_range * 0.1, max(all_temps) + temp_range * 0.1)
+        
+    except Exception as e:
+        ax.text(0.5, 0.5, f'Chart Error:\n{str(e)}', 
+               ha='center', va='center', fontsize=10, 
+               bbox=dict(boxstyle="round,pad=0.3", facecolor="lightcoral"))
+        ax.set_title('Approach Profiles (Error)', fontsize=14, fontweight='bold')
+
+def create_efficiency_chart(ax, system_data, costs_data):
+    """
+    Create efficiency analysis chart.
+    
+    Args:
+        ax: Matplotlib axis to plot on
+        system_data: System data dictionary
+        costs_data: Cost data dictionary
+    """
+    try:
+        # Calculate efficiency metrics
+        power_mw = float(system_data['power'])
+        total_cost = float(costs_data['total_cost'])
+        f1_flow = float(system_data['F1'])
+        
+        # Efficiency metrics
+        cost_per_mw = total_cost / power_mw if power_mw > 0 else 0
+        cost_per_flow = total_cost / f1_flow if f1_flow > 0 else 0
+        flow_per_mw = f1_flow / power_mw if power_mw > 0 else 0
+        
+        metrics = ['Cost/MW\n(€/MW)', 'Cost/Flow\n(€/L/min)', 'Flow/MW\n(L/min/MW)']
+        values = [cost_per_mw, cost_per_flow, flow_per_mw]
+        colors = ['#ff9999', '#99ff99', '#9999ff']
+        
+        bars = ax.bar(metrics, values, color=colors)
+        ax.set_title('System Efficiency Metrics', fontsize=14, fontweight='bold')
+        ax.set_ylabel('Efficiency Values')
+        
+        # Add value labels
+        for i, v in enumerate(values):
+            if v > 1000:
+                label = f"{v:,.0f}"
+            else:
+                label = f"{v:.1f}"
+            ax.text(i, v + max(values)*0.02, label, ha='center', fontweight='bold')
+            
+    except Exception as e:
+        ax.text(0.5, 0.5, f'Efficiency Chart Error:\n{str(e)}', 
+               ha='center', va='center', fontsize=10, 
+               bbox=dict(boxstyle="round,pad=0.3", facecolor="lightcoral"))
+        ax.set_title('Efficiency Metrics (Error)', fontsize=14, fontweight='bold')

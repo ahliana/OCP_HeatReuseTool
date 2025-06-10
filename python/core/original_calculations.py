@@ -559,3 +559,117 @@ def get_complete_system_analysis(power, t1, temp_diff, approach):
     print(f"📊 Summary: {system_data['power']}MW system, €{round(cost_data['total_cost']):,} total cost")
     
     return complete_analysis
+
+
+# Approach calculations
+
+def calculate_tcs_approach_profile(system_data, time_points=10):
+    """
+    Calculate TCS (internal) approach profile based on system parameters.
+    
+    Args:
+        system_data: System analysis data dictionary
+        time_points: Number of points to calculate along the profile
+    
+    Returns:
+        Dictionary with time and temperature/efficiency approach data
+    """
+    try:
+        T1 = float(system_data['T1'])
+        T2 = float(system_data['T2'])
+        F1 = float(system_data['F1'])
+        
+        # Create time progression (0 to 100% of process)
+        time_progression = [i / (time_points - 1) for i in range(time_points)]
+        
+        # TCS approach: Temperature reduction profile (descending)
+        tcs_temperatures = []
+        tcs_efficiency = []
+        
+        for t in time_progression:
+            # Temperature descends from T2 to T1
+            temp = T2 - (T2 - T1) * t
+            tcs_temperatures.append(temp)
+            
+            # Efficiency calculation (increases as temperature approaches target)
+            efficiency = 50 + 45 * t  # Efficiency improves from 50% to 95%
+            tcs_efficiency.append(efficiency)
+        
+        return {
+            'time_progression': time_progression,
+            'temperatures': tcs_temperatures,
+            'efficiency': tcs_efficiency,
+            'flow_rate': F1,
+            'start_temp': T2,
+            'target_temp': T1,
+            'profile_type': 'TCS_Internal'
+        }
+        
+    except Exception as e:
+        print(f"Error calculating TCS approach profile: {e}")
+        return None
+
+def calculate_fws_approach_profile(system_data, time_points=10):
+    """
+    Calculate FWS (external) approach profile based on system parameters.
+    
+    Args:
+        system_data: System analysis data dictionary
+        time_points: Number of points to calculate along the profile
+    
+    Returns:
+        Dictionary with time and temperature/efficiency approach data
+    """
+    try:
+        T3 = float(system_data['T3'])
+        T4 = float(system_data['T4'])
+        F2 = float(system_data['F2'])
+        
+        # Create time progression
+        time_progression = [i / (time_points - 1) for i in range(time_points)]
+        
+        # FWS approach: Temperature reduction profile (descending)
+        fws_temperatures = []
+        fws_efficiency = []
+        
+        for t in time_progression:
+            # Temperature descends from T3 to T4
+            temp = T3 - (T3 - T4) * t
+            fws_temperatures.append(temp)
+            
+            # Different efficiency curve for external system
+            efficiency = 40 + 50 * t  # Efficiency improves from 40% to 90%
+            fws_efficiency.append(efficiency)
+        
+        return {
+            'time_progression': time_progression,
+            'temperatures': fws_temperatures,
+            'efficiency': fws_efficiency,
+            'flow_rate': F2,
+            'start_temp': T3,
+            'target_temp': T4,
+            'profile_type': 'FWS_External'
+        }
+        
+    except Exception as e:
+        print(f"Error calculating FWS approach profile: {e}")
+        return None
+
+def calculate_combined_approach_profiles(system_data):
+    """
+    Calculate both TCS and FWS approach profiles for comparison.
+    
+    Args:
+        system_data: System analysis data dictionary
+    
+    Returns:
+        Dictionary with both approach profiles
+    """
+    tcs_profile = calculate_tcs_approach_profile(system_data)
+    fws_profile = calculate_fws_approach_profile(system_data)
+    
+    return {
+        'tcs_profile': tcs_profile,
+        'fws_profile': fws_profile,
+        'analysis_type': 'approach_comparison'
+    }
