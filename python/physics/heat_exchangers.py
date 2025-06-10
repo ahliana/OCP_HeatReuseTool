@@ -24,28 +24,9 @@ try:
     from .thermodynamics import sensible_heat_transfer
     from .units import liters_per_minute_to_m3_per_second
 except ImportError:
-    # Fallback definitions for standalone operation
-    WATER_PROPERTIES = {
-        '20C': {'density': 998.2, 'specific_heat': 4182, 'thermal_conductivity': 0.598,
-                'dynamic_viscosity': 1.002e-3, 'kinematic_viscosity': 1.004e-6, 'prandtl_number': 7.01},
-        '30C': {'density': 995.6, 'specific_heat': 4178, 'thermal_conductivity': 0.615,
-                'dynamic_viscosity': 7.975e-4, 'kinematic_viscosity': 8.01e-7, 'prandtl_number': 5.42},
-        '45C': {'density': 990.2, 'specific_heat': 4180, 'thermal_conductivity': 0.637,
-                'dynamic_viscosity': 5.96e-4, 'kinematic_viscosity': 6.02e-7, 'prandtl_number': 3.91},
-        '60C': {'density': 983.2, 'specific_heat': 4184, 'thermal_conductivity': 0.654,
-                'dynamic_viscosity': 4.67e-4, 'kinematic_viscosity': 4.75e-7, 'prandtl_number': 2.99}
-    }
-    
-    HEAT_TRANSFER_COEFFICIENTS = {
-        'water_to_water_hx': (1500, 4000),  # W/(m²·K) - typical range
-        'plate_hx': (3000, 8000),
-        'shell_tube_hx': (800, 2500)
-    }
-    
-    CONVERSION_FACTORS = {
-        'liters_to_m3': 0.001,
-        'minutes_to_seconds': 60
-    }
+    # Don't define functions if imports fail
+    raise ImportError(f"Cannot import required modules: {e}")
+ 
     
     def sensible_heat_transfer(mass_flow, specific_heat, delta_t):
         """Fallback sensible heat calculation"""

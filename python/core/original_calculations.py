@@ -14,6 +14,7 @@ try:
 
     from physics.constants import WATER_PROPERTIES
     from physics.units import (liters_per_minute_to_m3_per_second, m3_per_second_to_liters_per_minute)
+    from physics.thermodynamics import sensible_heat_transfer
 
     # Import data access functions
     from data.loader import get_csv_data, is_csv_loaded

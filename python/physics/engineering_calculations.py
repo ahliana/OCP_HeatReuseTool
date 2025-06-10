@@ -26,41 +26,8 @@ try:
                        liters_per_minute_to_m3_per_second, m3_per_second_to_liters_per_minute)
     from .materials import get_pipe_properties, get_material_properties
 except ImportError:
-    # Fallback constants for standalone operation
-    WATER_PROPERTIES = {
-        '20C': {
-            'density': 998.2,           # kg/m³
-            'specific_heat': 4182,      # J/(kg·K)
-            'thermal_conductivity': 0.598,  # W/(m·K)
-            'dynamic_viscosity': 1.002e-3,  # Pa·s
-            'kinematic_viscosity': 1.004e-6,  # m²/s
-            'prandtl_number': 7.01
-        },
-        '30C': {
-            'density': 995.7,
-            'specific_heat': 4178,
-            'thermal_conductivity': 0.615,
-            'dynamic_viscosity': 7.97e-4,
-            'kinematic_viscosity': 8.01e-7,
-            'prandtl_number': 5.42
-        },
-        '45C': {
-            'density': 990.2,
-            'specific_heat': 4180,
-            'thermal_conductivity': 0.637,
-            'dynamic_viscosity': 5.96e-4,
-            'kinematic_viscosity': 6.02e-7,
-            'prandtl_number': 3.91
-        }
-    }
-    
-    CONVERSION_FACTORS = {
-        'liters_to_m3': 0.001,
-        'minutes_to_seconds': 60,
-        'celsius_to_kelvin': 273.15,
-        'bar_to_pascal': 100000,
-        'kw_to_watts': 1000
-    }
+
+
     
     # European DN pipe sizes with inner diameters (mm)
     EUROPEAN_PIPE_SIZES = {
@@ -469,14 +436,6 @@ def reynolds_number_pipe(velocity: float, diameter: float, kinematic_viscosity: 
     return velocity * diameter / kinematic_viscosity
 
 
-def liters_per_minute_to_m3_per_second(lpm: float) -> float:
-    """Convert L/min to m³/s."""
-    return lpm * CONVERSION_FACTORS['liters_to_m3'] / CONVERSION_FACTORS['minutes_to_seconds']
-
-
-def m3_per_second_to_liters_per_minute(m3s: float) -> float:
-    """Convert m³/s to L/min."""
-    return m3s / CONVERSION_FACTORS['liters_to_m3'] * CONVERSION_FACTORS['minutes_to_seconds']
 
 
 # =============================================================================
@@ -534,25 +493,6 @@ def validate_physics_calculations() -> List[Dict]:
     return results
 
 
-# # Compatibility functions for existing code
-# def quick_power_calculation(flow_lpm: float, temp_rise_c: float, fluid: str = 'water') -> float:
-#     """Quick power calculation compatible with existing code."""
-#     if fluid == 'water':
-#         props = WATER_PROPERTIES['30C']  # Representative properties
-#         mass_flow = liters_per_minute_to_m3_per_second(flow_lpm) * props['density']
-#         return mass_flow * props['specific_heat'] * temp_rise_c
-#     else:
-#         raise ValueError("Only water implemented")
-
-
-# def get_MW(F1: float, T1: float, T2: float) -> float:
-#     """Equivalent to original get_MW function using standard physics."""
-#     return quick_power_calculation(F1, T2 - T1)
-
-
-# def get_MW_divd(F1: float, T1: float, T2: float) -> float:
-#     """Equivalent to original get_MW_divd function."""
-#     return get_MW(F1, T1, T2) / 1_000_000
 
 
 # =============================================================================

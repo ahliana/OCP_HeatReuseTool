@@ -24,7 +24,7 @@ try:
     from .constants import CONVERSION_FACTORS, WATER_PROPERTIES
 except ImportError:
     # Don't define functions if imports fail
-    raise ImportError(f"Cannot import required physics modules: {e}")
+    raise ImportError(f"Cannot import required modules: {e}")
 
 
 # =============================================================================
