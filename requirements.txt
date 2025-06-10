@@ -1,5 +1,21 @@
+# Heat Reuse Tool Dependencies
+# Core Jupyter and Widget Dependencies
+jupyter>=1.0.0
 ipywidgets>=8.0.0
+notebook>=6.4.0
+
+# Data Analysis and Computation
 pandas>=1.5.0
 numpy>=1.20.0
+
+# Visualization
 matplotlib>=3.5.0
-jupyter>=1.0.0
+
+# Physics and Engineering Calculations
+scipy>=1.9.0
+
+# Development and Testing (optional but recommended)
+pytest>=7.0.0
+
+# IPython for better notebook experience
+ipython>=8.0.0
