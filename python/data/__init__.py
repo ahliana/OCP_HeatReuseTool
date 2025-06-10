@@ -26,7 +26,7 @@ def _auto_load_csv_files():
             # Check if there are CSV files in this directory
             csv_files = [f for f in os.listdir(path) if f.endswith('.csv')]
             if csv_files:
-                print(f"🔧 Auto-loading CSV files from: {path}")
+                # print(f"🔧 Auto-loading CSV files from: {path}")
                 load_csv_files(path)
                 return True
     

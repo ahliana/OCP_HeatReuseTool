@@ -38,16 +38,16 @@ def load_csv_files(data_dir: str = "Data") -> Dict[str, pd.DataFrame]:
             try:
                 # Try to read the CSV file
                 csv_data[df_name] = pd.read_csv(file_path)
-                print(f"✅ Loaded: {file} as {df_name}")
+                # print(f"✅ Loaded: {file} as {df_name}")
             except Exception as e:
                 # Try with different separators if automatic detection fails
                 try:
                     csv_data[df_name] = pd.read_csv(file_path, sep=';')
-                    print(f"✅ Loaded: {file} as {df_name} (using semicolon separator)")
+                    # print(f"✅ Loaded: {file} as {df_name} (using semicolon separator)")
                 except:
                     try:
                         csv_data[df_name] = pd.read_csv(file_path, sep='\\t')
-                        print(f"✅ Loaded: {file} as {df_name} (using tab separator)")
+                        # print(f"✅ Loaded: {file} as {df_name} (using tab separator)")
                     except Exception as e2:
                         print(f"❌ Failed to load {file}: {e2}")
         
