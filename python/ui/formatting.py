@@ -273,3 +273,237 @@ def safe_float_convert(value):
         return float(value)
     else:
         return 0.0
+    
+
+
+def generate_smart_insights(analysis):
+    """
+    Generate smart recommendations based on current system analysis.
+    
+    Args:
+        analysis: Complete system analysis dictionary
+    
+    Returns:
+        List of recommendation strings
+    """
+    recommendations = []
+    
+    try:
+        system = analysis['system']
+        costs = analysis['costs']
+        
+        power = system['power']
+        total_cost = costs['total_cost']
+        cost_per_mw = total_cost / power
+        
+        # Get heat exchanger effectiveness if available
+        effectiveness = analysis.get('validation', {}).get('hx_effectiveness', 0.75)  # Default estimate
+        
+        # Cost efficiency recommendations
+        if cost_per_mw < 20000:
+            recommendations.append("💰 Excellent cost efficiency - below €20,000 per MW")
+        elif cost_per_mw > 30000:
+            recommendations.append("📈 Consider larger system size for better cost efficiency")
+        else:
+            recommendations.append("✅ Good cost efficiency for this system size")
+        
+        # Power size recommendations
+        if power < 1.5:
+            next_size_cost_per_mw = estimate_cost_per_mw(power + 0.5)
+            improvement = ((cost_per_mw - next_size_cost_per_mw) / cost_per_mw) * 100
+            if improvement > 10:
+                recommendations.append(f"🎯 Scaling to {power + 0.5} MW could improve cost efficiency by {improvement:.0f}%")
+        
+        # Temperature recommendations
+        t1 = system['T1']
+        t2 = system['T2']
+        temp_rise = t2 - t1
+        
+        if t1 == 20:
+            recommendations.append("🌟 Optimal T1 temperature for server cooling compatibility")
+        elif t1 < 18:
+            recommendations.append("❄️ Low T1 may require additional server cooling consideration")
+        
+        if temp_rise >= 12:
+            recommendations.append("🔥 High temperature rise enables excellent heat recovery potential")
+        elif temp_rise < 8:
+            recommendations.append("⚡ Consider higher temperature rise for better heat recovery")
+        
+        # European compliance
+        approach = system.get('approach', analysis.get('validation', {}).get('approach_calculated', 2))
+        if approach >= 3:
+            recommendations.append("✅ Conservative approach temperature - excellent for European standards")
+        elif approach >= 2:
+            recommendations.append("✅ Meets European minimum approach temperature requirements")
+        
+        # Flow rate insights
+        f1 = system['F1']
+        f2 = system['F2']
+        if abs(f1 - f2) / max(f1, f2) < 0.1:
+            recommendations.append("⚖️ Well-balanced flow rates for optimal heat transfer")
+        
+    except Exception as e:
+        recommendations.append("⚠️ Unable to generate recommendations - check system data")
+    
+    return recommendations[:4]  # Limit to 4 recommendations for clean display
+
+def estimate_cost_per_mw(target_mw):
+    """
+    Estimate cost per MW for a target power size.
+    Based on your MW price data trends.
+    """
+    # Simplified estimation based on your price data
+    if target_mw <= 1:
+        return 21000
+    elif target_mw <= 2:
+        return 19000
+    elif target_mw <= 3:
+        return 17300
+    else:
+        return 16000
+
+def create_recommendations_html(recommendations, border_color="#4CAF50", title_color="#2E7D32"):
+    """
+    Create HTML for recommendations display matching cost analysis style.
+    
+    Args:
+        recommendations: List of recommendation strings
+        border_color: Border color for the box
+        title_color: Title color
+    
+    Returns:
+        HTML string for recommendations
+    """
+    rec_rows = ""
+    for rec in recommendations:
+        rec_rows += f"""
+        <tr>
+            <td style="padding: 8px 0; color: #333; font-size: 14px;">
+                {rec}
+            </td>
+        </tr>"""
+    
+    return f"""
+    <div style="border: 2px solid {border_color}; border-radius: 12px; padding: 20px; margin: 15px 0; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h3 style="color: {title_color}; margin: 0 0 15px 0; font-size: 18px; font-weight: bold; text-align: center;">
+            🧠 Smart Recommendations
+        </h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            {rec_rows}
+        </table>
+    </div>
+    """
+    
+
+def generate_performance_rating(cost_per_mw, effectiveness):
+    """
+    Generate performance rating based on cost efficiency and effectiveness.
+    
+    Returns:
+        Dictionary with rating info
+    """
+    # Cost efficiency scoring
+    if cost_per_mw < 20000:
+        cost_score = 5
+    elif cost_per_mw < 25000:
+        cost_score = 4
+    elif cost_per_mw < 30000:
+        cost_score = 3
+    else:
+        cost_score = 2
+    
+    # Effectiveness scoring
+    if effectiveness > 0.8:
+        eff_score = 5
+    elif effectiveness > 0.7:
+        eff_score = 4
+    elif effectiveness > 0.6:
+        eff_score = 3
+    else:
+        eff_score = 2
+    
+    # Overall rating
+    overall_score = (cost_score + eff_score) / 2
+    
+    if overall_score >= 4.5:
+        rating = "⭐⭐⭐⭐⭐ EXCELLENT"
+        color = "#4CAF50"
+    elif overall_score >= 3.5:
+        rating = "⭐⭐⭐⭐ VERY GOOD"
+        color = "#8BC34A"
+    elif overall_score >= 2.5:
+        rating = "⭐⭐⭐ GOOD"
+        color = "#FFC107"
+    else:
+        rating = "⭐⭐ ACCEPTABLE"
+        color = "#FF9800"
+    
+    return {
+        'rating': rating,
+        'color': color,
+        'cost_score': cost_score,
+        'eff_score': eff_score
+    }
+
+def create_summary_cards_html(power, total_cost, cost_per_mw, effectiveness, rating_info, eu_compliant):
+    """
+    Create HTML for visual summary cards.
+    """
+    return f"""
+    <div style="margin: 20px 0;">
+        <h3 style="color: #2E7D32; margin: 0 0 20px 0; font-size: 20px; font-weight: bold; text-align: center;">
+            📊 System Overview
+        </h3>
+        <div style="display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
+            
+            <!-- System Performance Card -->
+            <div style="border: 2px solid #4CAF50; padding: 20px; border-radius: 12px; flex: 1; min-width: 280px; background: linear-gradient(135deg, #e8f5e8 0%, #ffffff 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h4 style="color: #2E7D32; margin: 0 0 15px 0; font-size: 16px; display: flex; align-items: center;">
+                    🏢 System Performance
+                </h4>
+                <div style="margin-bottom: 10px;">
+                    <strong>{power} MW</strong> Heat Recovery System
+                </div>
+                <div style="margin-bottom: 10px;">
+                    Effectiveness: <strong>{effectiveness:.1%}</strong>
+                    <div style="background: #e0e0e0; height: 8px; border-radius: 4px; margin-top: 5px;">
+                        <div style="background: #4CAF50; height: 8px; border-radius: 4px; width: {effectiveness*100}%;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    EU Compliant: <strong>{"✅ Yes" if eu_compliant else "❌ No"}</strong>
+                </div>
+                <div style="color: {rating_info['color']}; font-weight: bold; font-size: 12px;">
+                    {rating_info['rating']}
+                </div>
+            </div>
+            
+            <!-- Investment Summary Card -->
+            <div style="border: 2px solid #2196F3; padding: 20px; border-radius: 12px; flex: 1; min-width: 280px; background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h4 style="color: #1976D2; margin: 0 0 15px 0; font-size: 16px; display: flex; align-items: center;">
+                    💰 Investment Summary
+                </h4>
+                <div style="margin-bottom: 10px;">
+                    Total Cost: <strong>€{total_cost:,.0f}</strong>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    Cost/MW: <strong>€{cost_per_mw:,.0f}</strong>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="background: #e0e0e0; height: 20px; border-radius: 10px; position: relative; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 50%, #FFC107 100%); height: 20px; border-radius: 10px; width: 70%;"></div>
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
+                            Cost Efficiency
+                        </div>
+                    </div>
+                </div>
+                <div style="color: {rating_info['color']}; font-weight: bold; font-size: 12px;">
+                    Performance Rating: {rating_info['cost_score']}/5 ⭐
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    """
+    
+    

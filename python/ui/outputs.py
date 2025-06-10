@@ -8,9 +8,12 @@ from .config import OUTPUT_CONFIG
 from .formatting import (
     create_result_html, create_error_html, create_validation_errors_html,
     extract_formatted_system_params, extract_formatted_cost_analysis, 
-    extract_delta_t_values
+    extract_delta_t_values,
+    generate_smart_insights, generate_performance_rating,  # Add these
+    create_recommendations_html, create_summary_cards_html  # Add these too
 )
 from .charts import create_system_charts
+
 
 # =============================================================================
 # MAIN OUTPUT DISPLAY FUNCTIONS
@@ -168,7 +171,7 @@ def display_info_message(output_area, message):
 
 def display_complete_analysis(outputs_dict, analysis):
     """
-    Display complete analysis in all output areas.
+    Display complete analysis in all output areas including new sections.
     
     Args:
         outputs_dict: Dictionary of output widgets
@@ -177,6 +180,12 @@ def display_complete_analysis(outputs_dict, analysis):
     try:
         display_system_parameters(outputs_dict['system_params'], analysis)
         display_cost_analysis(outputs_dict['cost_analysis'], analysis)
+        display_smart_recommendations(outputs_dict['cost_analysis'], analysis)  # NEW
+        
+        # Only display visual summary if the output area exists (for backward compatibility)
+        if 'visual_summary' in outputs_dict:
+            display_visual_summary_cards(outputs_dict['visual_summary'], analysis)  # NEW
+        
         display_charts(outputs_dict['charts'], analysis)
     except Exception as e:
         display_error(outputs_dict['system_params'], f"Error displaying complete analysis: {str(e)}")
@@ -342,3 +351,84 @@ def display_responsive_results(outputs_dict, analysis):
     else:
         # Normal mode - standard display
         display_complete_analysis(outputs_dict, analysis)
+        
+        
+        
+def display_smart_recommendations(output_area, analysis):
+    """
+    Display smart recommendations in a rounded box below cost analysis.
+    
+    Args:
+        output_area: Output widget to display in
+        analysis: Complete system analysis dictionary
+    """
+    with output_area:
+        try:
+            # Extract key metrics for analysis
+            system = analysis['system']
+            costs = analysis['costs']
+            sizing = analysis['sizing']
+            
+            power = system['power']
+            total_cost = costs['total_cost']
+            cost_per_mw = total_cost / power
+            
+            # Generate smart insights
+            recommendations = generate_smart_insights(analysis)
+            
+            # Get styling configuration (reuse cost analysis style)
+            config = OUTPUT_CONFIG['cost_analysis']  # Reuse existing styling
+            
+            # Create recommendations HTML
+            rec_html = create_recommendations_html(
+                recommendations=recommendations,
+                border_color=config['border_color'],
+                title_color=config['title_color']
+            )
+            
+            display(HTML(rec_html))
+            
+        except Exception as e:
+            display_error(output_area, f"Error displaying recommendations: {str(e)}")
+            
+            
+def display_visual_summary_cards(output_area, analysis):
+    """
+    Display visual summary cards above charts section.
+    
+    Args:
+        output_area: Output widget to display in
+        analysis: Complete system analysis dictionary
+    """
+    with output_area:
+        try:
+            # Extract key metrics
+            system = analysis['system']
+            costs = analysis['costs']
+            sizing = analysis['sizing']
+            
+            power = system['power']
+            total_cost = costs['total_cost']
+            cost_per_mw = total_cost / power
+            
+            # Get effectiveness estimate
+            effectiveness = analysis.get('validation', {}).get('hx_effectiveness', 0.75)
+            
+            # Generate performance rating
+            rating_info = generate_performance_rating(cost_per_mw, effectiveness)
+            
+            # Create cards HTML
+            cards_html = create_summary_cards_html(
+                power=power,
+                total_cost=total_cost,
+                cost_per_mw=cost_per_mw,
+                effectiveness=effectiveness,
+                rating_info=rating_info,
+                eu_compliant=True  # Based on your validation
+            )
+            
+            display(HTML(cards_html))
+            
+        except Exception as e:
+            display_error(output_area, f"Error displaying summary cards: {str(e)}")
+            

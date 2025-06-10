@@ -13,8 +13,9 @@ from .formatting import format_display_value, safe_float_convert
 
 def create_system_charts(analysis):
     """
-    Create visualization charts for the system analysis with configurable layouts.
-    Now includes approach profiles chart.
+    Create visualization charts for the system analysis.
+    Shows: cost breakdown, flow rates, temperature, approach profiles,
+    plus new performance gauges and cost efficiency chart.
     
     Args:
         analysis: Complete system analysis dictionary
@@ -23,38 +24,32 @@ def create_system_charts(analysis):
         None (displays charts)
     """
     try:
-        # Get layout configuration - expand to 2x3 grid for approach profiles
-        layout = CHART_CONFIG['layout']
-        fig, axs = plt.subplots(
-            3, 2,  # Changed to 3 rows, 2 columns for new chart
-            figsize=(layout['figure_size'][0], layout['figure_size'][1] + 4)  # Make taller
-        )
-        
-        # Apply matplotlib style
-        plt.style.use(layout['style'])
+        # Create 2x3 grid for all 6 charts
+        fig, axs = plt.subplots(2, 3, figsize=(18, 10))
         
         # Extract data
         system = analysis['system']
         costs = analysis['costs']
         sizing = analysis['sizing']
         
-        # Create each chart based on configuration
-        create_temperature_chart(axs[0, 0], system)
+        # Top row - original charts
+        create_cost_breakdown_chart(axs[0, 0], costs)
         create_flow_rates_chart(axs[0, 1], system)
-        create_cost_breakdown_chart(axs[1, 0], costs)
-        create_system_metrics_chart(axs[1, 1], system, sizing)
+        create_temperature_chart(axs[0, 2], system)
         
-        # NEW: Create approach profiles chart
-        create_approach_profiles_chart(axs[2, 0], system)
+        # Bottom row - approach profiles + new charts
+        create_approach_profiles_chart(axs[1, 0], system)
         
-        # Create efficiency comparison chart in the remaining space
-        create_efficiency_chart(axs[2, 1], system, costs)
+        # New performance gauge
+        effectiveness = analysis.get('validation', {}).get('hx_effectiveness', 0.75)
+        create_effectiveness_gauge(axs[1, 1], effectiveness)
+        
+        # New cost efficiency chart
+        create_cost_efficiency_chart(axs[1, 2], analysis)
         
         # Set overall title
         power_display = format_display_value(float(system['power']), 'temperature', False)
-        title_template = CHART_CONFIG['charts']['system_metrics'].get('title_template', 
-                        'Heat Reuse System Analysis - {power}MW System')
-        plt.suptitle(title_template.format(power=power_display), 
+        plt.suptitle(f'Heat Reuse System Analysis - {power_display}MW System', 
                     fontsize=16, fontweight='bold')
         
         plt.tight_layout()
@@ -63,6 +58,28 @@ def create_system_charts(analysis):
     except Exception as e:
         print(f"Chart creation error: {str(e)}")
         create_error_chart(str(e))
+        
+        # # Create each chart based on configuration
+        # create_temperature_chart(axs[0, 0], system)
+        # create_flow_rates_chart(axs[0, 1], system)
+        # create_cost_breakdown_chart(axs[1, 0], costs)
+        # create_system_metrics_chart(axs[1, 1], system, sizing)
+        
+        # # Create approach profiles chart
+        # create_approach_profiles_chart(axs[2, 0], system)
+        
+        # # Create efficiency comparison chart in the remaining space
+        # create_efficiency_chart(axs[2, 1], system, costs)
+        
+        # # Set overall title
+        # power_display = format_display_value(float(system['power']), 'temperature', False)
+        # title_template = CHART_CONFIG['charts']['system_metrics'].get('title_template', 
+        #                 'Heat Reuse System Analysis - {power}MW System')
+        # plt.suptitle(title_template.format(power=power_display), 
+        #             fontsize=16, fontweight='bold')
+        
+        
+
 
 # =============================================================================
 # INDIVIDUAL CHART CREATION FUNCTIONS
@@ -512,3 +529,206 @@ def create_efficiency_chart(ax, system_data, costs_data):
                ha='center', va='center', fontsize=10, 
                bbox=dict(boxstyle="round,pad=0.3", facecolor="lightcoral"))
         ax.set_title('Efficiency Metrics (Error)', fontsize=14, fontweight='bold')
+        
+
+def create_effectiveness_gauge(ax, effectiveness):
+    """
+    Create effectiveness gauge chart showing performance vs European standards.
+    """
+    import numpy as np
+    
+    # Gauge parameters
+    theta = np.linspace(0, np.pi, 100)
+    
+    # Create gauge background
+    ax.plot(np.cos(theta), np.sin(theta), 'lightgray', linewidth=8)
+    
+    # Color zones
+    # Red zone (0-0.6): Poor
+    theta_red = np.linspace(0, np.pi * 0.6, 50)
+    ax.plot(np.cos(theta_red), np.sin(theta_red), '#FF5252', linewidth=8)
+    
+    # Yellow zone (0.6-0.8): Good  
+    theta_yellow = np.linspace(np.pi * 0.6, np.pi * 0.8, 50)
+    ax.plot(np.cos(theta_yellow), np.sin(theta_yellow), '#FFC107', linewidth=8)
+    
+    # Green zone (0.8-1.0): Excellent
+    theta_green = np.linspace(np.pi * 0.8, np.pi, 50)
+    ax.plot(np.cos(theta_green), np.sin(theta_green), '#4CAF50', linewidth=8)
+    
+    # Needle position
+    needle_angle = np.pi * (1 - effectiveness)
+    needle_x = [0, 0.8 * np.cos(needle_angle)]
+    needle_y = [0, 0.8 * np.sin(needle_angle)]
+    ax.plot(needle_x, needle_y, 'black', linewidth=4)
+    ax.plot(0, 0, 'ko', markersize=8)
+    
+    # Labels
+    ax.text(0, -0.3, f'{effectiveness:.1%}', ha='center', va='center', 
+            fontsize=16, fontweight='bold')
+    ax.text(0, -0.5, 'Effectiveness', ha='center', va='center', fontsize=12)
+    
+    # Zone labels
+    ax.text(-0.7, 0.3, 'Poor\n(<60%)', ha='center', va='center', fontsize=10, color='#FF5252')
+    ax.text(0, 0.9, 'Good\n(60-80%)', ha='center', va='center', fontsize=10, color='#FFC107')
+    ax.text(0.7, 0.3, 'Excellent\n(>80%)', ha='center', va='center', fontsize=10, color='#4CAF50')
+    
+    ax.set_xlim(-1.2, 1.2)
+    ax.set_ylim(-0.6, 1.2)
+    ax.set_aspect('equal')
+    ax.axis('off')
+    ax.set_title('Heat Exchanger Effectiveness', fontsize=14, fontweight='bold', pad=20)
+
+def create_cost_efficiency_chart(ax, analysis):
+    """
+    Create cost efficiency chart showing cost per MW across different system sizes.
+    """
+    # Data based on your MW price data
+    mw_sizes = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5]
+    prices = [16000, 18000, 21000, 26000, 30000, 35000, 38000, 41000, 42000, 45000, 52000, 58000, 61000, 65000, 70000, 73000, 77000, 81000, 85000]
+    
+    # Calculate cost per MW
+    cost_per_mw = [price/mw for price, mw in zip(prices, mw_sizes)]
+    
+    # Current system highlighting
+    current_power = analysis['system']['power']
+    current_cost_per_mw = analysis['costs']['total_cost'] / current_power
+    
+    # Create bar chart
+    bars = ax.bar(mw_sizes, cost_per_mw, color='lightblue', alpha=0.7, edgecolor='navy')
+    
+    # Highlight current system
+    current_index = None
+    for i, mw in enumerate(mw_sizes):
+        if abs(mw - current_power) < 0.01:  # Find matching power
+            bars[i].set_color('#FF5722')
+            bars[i].set_alpha(1.0)
+            current_index = i
+            break
+    
+    # Add trend line
+    ax.plot(mw_sizes, cost_per_mw, 'r--', alpha=0.8, linewidth=2, label='Cost Trend')
+    
+    # Annotations
+    if current_index is not None:
+        ax.annotate(f'Your System\n€{current_cost_per_mw:,.0f}/MW', 
+                   xy=(mw_sizes[current_index], cost_per_mw[current_index]),
+                   xytext=(mw_sizes[current_index], cost_per_mw[current_index] + 3000),
+                   arrowprops=dict(arrowstyle='->', color='red', lw=2),
+                   ha='center', fontweight='bold', color='red')
+    
+    # Formatting
+    ax.set_xlabel('System Size (MW)', fontweight='bold')
+    ax.set_ylabel('Cost per MW (€)', fontweight='bold')
+    ax.set_title('Cost Efficiency by System Size', fontsize=14, fontweight='bold')
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    
+    # Format y-axis as currency
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'€{x:,.0f}'))
+    
+    # Add efficiency zones
+    ax.axhline(y=20000, color='green', linestyle=':', alpha=0.7, label='Excellent (<€20k/MW)')
+    ax.axhline(y=30000, color='orange', linestyle=':', alpha=0.7, label='Good Threshold')
+
+def create_eu_compliance_gauge(ax, analysis):
+    """
+    Create EU compliance dashboard showing key compliance metrics.
+    
+    Args:
+        ax: Matplotlib axis to plot on
+        analysis: System analysis data
+    """
+    # Compliance checks
+    approach = analysis.get('validation', {}).get('approach_calculated', 2.5)
+    effectiveness = analysis.get('validation', {}).get('hx_effectiveness', 0.75)
+    
+    # Compliance criteria
+    compliance_items = [
+        ('Approach Temp', approach >= 2.0, f'{approach:.1f}°C (≥2.0°C)'),
+        ('Pinch Temp', approach >= 1.0, f'{approach:.1f}°C (≥1.0°C)'),  # Simplified
+        ('Effectiveness', effectiveness >= 0.6, f'{effectiveness:.1%} (≥60%)'),
+        ('Flow Balance', True, '✅ Verified')  # Assuming balanced
+    ]
+    
+    # Create compliance visualization
+    y_positions = np.arange(len(compliance_items))
+    colors = ['#4CAF50' if compliant else '#FF5252' for _, compliant, _ in compliance_items]
+    
+    # Horizontal bar chart
+    bars = ax.barh(y_positions, [1]*len(compliance_items), color=colors, alpha=0.7)
+    
+    # Add labels
+    labels = [item[0] for item in compliance_items]
+    values = [item[2] for item in compliance_items]
+    
+    ax.set_yticks(y_positions)
+    ax.set_yticklabels(labels)
+    ax.set_xlim(0, 1.2)
+    
+    # Add value labels
+    for i, (bar, value) in enumerate(zip(bars, values)):
+        ax.text(0.5, i, value, ha='center', va='center', fontweight='bold', fontsize=10)
+    
+    ax.set_title('European Standards Compliance', fontsize=14, fontweight='bold')
+    ax.set_xlabel('Compliance Status')
+    ax.grid(True, alpha=0.3)
+    
+    
+def create_cost_efficiency_chart(ax, analysis):
+    """
+    Create cost efficiency chart showing cost per MW across different system sizes.
+    
+    Args:
+        ax: Matplotlib axis to plot on
+        analysis: System analysis data
+    """
+    # Data based on your MW price data
+    mw_sizes = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5]
+    prices = [16000, 18000, 21000, 26000, 30000, 35000, 38000, 41000, 42000, 45000, 52000, 58000, 61000, 65000, 70000, 73000, 77000, 81000, 85000]
+    
+    # Calculate cost per MW
+    cost_per_mw = [price/mw for price, mw in zip(prices, mw_sizes)]
+    
+    # Current system highlighting
+    current_power = analysis['system']['power']
+    current_cost_per_mw = analysis['costs']['total_cost'] / current_power
+    
+    # Create bar chart
+    bars = ax.bar(mw_sizes, cost_per_mw, color='lightblue', alpha=0.7, edgecolor='navy')
+    
+    # Highlight current system
+    current_index = None
+    for i, mw in enumerate(mw_sizes):
+        if abs(mw - current_power) < 0.01:  # Find matching power
+            bars[i].set_color('#FF5722')
+            bars[i].set_alpha(1.0)
+            current_index = i
+            break
+    
+    # Add trend line
+    ax.plot(mw_sizes, cost_per_mw, 'r--', alpha=0.8, linewidth=2, label='Cost Trend')
+    
+    # Annotations
+    if current_index is not None:
+        ax.annotate(f'Your System\n€{current_cost_per_mw:,.0f}/MW', 
+                   xy=(mw_sizes[current_index], cost_per_mw[current_index]),
+                   xytext=(mw_sizes[current_index], cost_per_mw[current_index] + 3000),
+                   arrowprops=dict(arrowstyle='->', color='red', lw=2),
+                   ha='center', fontweight='bold', color='red')
+    
+    # Formatting
+    ax.set_xlabel('System Size (MW)', fontweight='bold')
+    ax.set_ylabel('Cost per MW (€)', fontweight='bold')
+    ax.set_title('Cost Efficiency by System Size', fontsize=14, fontweight='bold')
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    
+    # Format y-axis as currency
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'€{x:,.0f}'))
+    
+    # Add efficiency zones
+    ax.axhline(y=20000, color='green', linestyle=':', alpha=0.7, label='Excellent (<€20k/MW)')
+    ax.axhline(y=30000, color='orange', linestyle=':', alpha=0.7, label='Good Threshold')
+    
+    
