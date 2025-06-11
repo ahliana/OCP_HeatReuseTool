@@ -386,7 +386,7 @@ def create_recommendations_html(recommendations, border_color="#4CAF50", title_c
     return f"""
     <div style="border: 2px solid {border_color}; border-radius: 12px; padding: 20px; margin: 15px 0; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
         <h3 style="color: {title_color}; margin: 0 0 15px 0; font-size: 18px; font-weight: bold; text-align: center;">
-            🧠 Smart Recommendations
+            Smart Recommendations
         </h3>
         <table style="width: 100%; border-collapse: collapse;">
             {rec_rows}
@@ -479,7 +479,7 @@ def create_summary_cards_html(power, total_cost, cost_per_mw, effectiveness, rat
     return f"""
     <div style="margin: 20px 0;">
         <h3 style="color: #2E7D32; margin: 0 0 20px 0; font-size: 20px; font-weight: bold; text-align: center;">
-            📊 System Overview
+            System Overview
         </h3>
         <div style="display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
             

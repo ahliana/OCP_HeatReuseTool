@@ -189,16 +189,19 @@ def display_complete_analysis(outputs_dict, analysis):
     try:
         display_system_parameters(outputs_dict['system_params'], analysis)
         display_cost_analysis(outputs_dict['cost_analysis'], analysis)
-        display_smart_recommendations(outputs_dict['cost_analysis'], analysis)  # NEW
-        
-        # Only display visual summary if the output area exists (for backward compatibility)
-        if 'visual_summary' in outputs_dict:
-            display_visual_summary_cards(outputs_dict['visual_summary'], analysis)  # NEW
-        
         display_charts(outputs_dict['charts'], analysis)
+        
+        # Smart recommendations in their own section
+        if 'smart_recommendations' in outputs_dict:
+            display_smart_recommendations(outputs_dict['smart_recommendations'], analysis)
+        
+        # Visual summary at the bottom
+        if 'visual_summary' in outputs_dict:
+            display_visual_summary_cards(outputs_dict['visual_summary'], analysis)
+            
     except Exception as e:
         display_error(outputs_dict['system_params'], f"Error displaying complete analysis: {str(e)}")
-
+        
 def clear_all_displays(outputs_dict):
     """
     Clear all output displays.

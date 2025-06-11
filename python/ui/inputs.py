@@ -91,9 +91,10 @@ def create_output_areas():
     """
     return {
         'system_params': widgets.Output(),
-        'cost_analysis': widgets.Output(),  # This will include recommendations
-        'visual_summary': widgets.Output(),  # Section for summary cards
-        'charts': widgets.Output()          # This will include gauges
+        'cost_analysis': widgets.Output(),      # Just cost analysis now
+        'smart_recommendations': widgets.Output(), # NEW - separate section
+        'visual_summary': widgets.Output(),     # Section for summary cards
+        'charts': widgets.Output()              # This will include gauges
     }
 
 
@@ -115,12 +116,13 @@ def create_interface_layout(widgets_dict, outputs_dict):
     
     # Complete vertical layout: inputs, button, then all outputs
     return widgets.VBox([
-        input_grid,                                           # Power/T1, TempRise/Approach
-        widgets_dict['calculate_button'],                     # Calculate button
-        outputs_dict['system_params'],                        # System Parameters (below button)
-        outputs_dict['cost_analysis'],                        # Cost Analysis + Smart Recommendations
-        outputs_dict.get('visual_summary', widgets.Output()), # System Overview Cards  
-        outputs_dict['charts']                                # Charts
+        input_grid,                                              # Power/T1, TempRise/Approach
+        widgets_dict['calculate_button'],                        # Calculate button
+        outputs_dict['system_params'],                           # 1. System Parameters
+        outputs_dict['cost_analysis'],                           # 2. Cost Analysis (now separate)
+        outputs_dict['charts'],                                  # 3. Charts
+        outputs_dict.get('smart_recommendations', widgets.Output()), # 4. Smart Recommendations
+        outputs_dict.get('visual_summary', widgets.Output())    # 5. System Overview Cards
     ], layout=widgets.Layout(margin='10px'))
 
 # =============================================================================

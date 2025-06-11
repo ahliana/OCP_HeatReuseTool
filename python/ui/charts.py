@@ -33,21 +33,16 @@ def create_system_charts(analysis):
         costs = analysis['costs']
         sizing = analysis['sizing']
         
-        # Top row - original charts
-        create_cost_breakdown_chart(axs[0, 0], costs)
-        create_flow_rates_chart(axs[0, 1], system)
-        create_temperature_chart(axs[0, 2], system)
-        
-        # Bottom row - approach profiles + new charts
-        create_approach_profiles_chart(axs[1, 0], system)
-        
-        # New performance gauge
-        effectiveness = calculate_effectiveness(analysis)
-        create_effectiveness_gauge(axs[1, 1], effectiveness)
-        
-        # New cost efficiency chart
-        create_cost_efficiency_chart(axs[1, 2], analysis)
-        
+        # Top row: Cost Breakdown, System Approach, Effectiveness
+        create_cost_breakdown_chart(axs[0, 0], costs)      # Cost Breakdown
+        create_approach_profiles_chart(axs[0, 1], system)  # System Approach  
+        create_effectiveness_gauge(axs[0, 2], calculate_effectiveness(analysis)) # Effectiveness
+
+        # Bottom row: Flow Rates, Temperatures, Efficiency
+        create_flow_rates_chart(axs[1, 0], system)         # Flow Rates
+        create_temperature_chart(axs[1, 1], system)        # Temperatures
+        create_cost_efficiency_chart(axs[1, 2], analysis)  # Efficiency
+       
         # Set overall title
         power_display = format_display_value(float(system['power']), 'temperature', False)
         plt.suptitle(f'Heat Reuse System Analysis - {power_display}MW System', 
