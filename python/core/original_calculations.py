@@ -234,7 +234,8 @@ def get_PipeCost_perMeter(flow_rate, pipe_type="sched40"):
                     return cost
                     
         except ImportError:
-            print("⚠️ Units conversion module not available")
+            # print("⚠️ Units conversion module not available")
+            print('')
         
         # Option 3: European engineering fallback mapping
         # Based on standard DN to inch conversions
