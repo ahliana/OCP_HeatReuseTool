@@ -23,6 +23,9 @@ try:
     # Import lookup functions - now in separate module
     from core.lookup import lookup_allhx_data, get_lookup_value
     
+    import warnings
+    warnings.filterwarnings('ignore', category=FutureWarning, module='pandas')
+    
 except ImportError as e:
     # Don't define functions if imports fail
     raise ImportError(f"Cannot import required physics modules: {e}")
