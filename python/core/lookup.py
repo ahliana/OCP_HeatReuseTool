@@ -50,7 +50,7 @@ def lookup_allhx_data(power: float, t1: float, temp_diff: float, approach: float
     # Make a copy to avoid modifying the original
     df = df.copy()
     
-    print(f"🔍 ALLHX lookup: Power={power}, T1={t1}, TempDiff={temp_diff}, T2={t2}, Approach={approach}")
+    # print(f"🔍 ALLHX lookup: Power={power}, T1={t1}, TempDiff={temp_diff}, T2={t2}, Approach={approach}")
     
     # Clean data - remove header rows
     df = df[df['wha'].astype(str).str.strip() != 'A']
@@ -67,7 +67,7 @@ def lookup_allhx_data(power: float, t1: float, temp_diff: float, approach: float
     # Remove invalid rows
     valid_df = df[(df['wha'] > 0) & (df['T1'] > 0) & (df['itdt'] > 0) & (df['TCSapp'] > 0)]
     
-    print(f"📊 Valid data rows: {len(valid_df)}")
+    # print(f"📊 Valid data rows: {len(valid_df)}")
     
     if len(valid_df) == 0:
         print("❌ No valid data after conversion")
@@ -79,11 +79,11 @@ def lookup_allhx_data(power: float, t1: float, temp_diff: float, approach: float
     temp_diff_values = sorted(valid_df['itdt'].unique())
     approach_values = sorted(valid_df['TCSapp'].unique())
     
-    print("Available combinations:")
-    print(f"  Power (wha): {power_values}")
-    print(f"  T1: {t1_values}")
-    print(f"  TempDiff (itdt): {temp_diff_values}")
-    print(f"  Approach (TCSapp): {approach_values}")
+    # print("Available combinations:")
+    # print(f"  Power (wha): {power_values}")
+    # print(f"  T1: {t1_values}")
+    # print(f"  TempDiff (itdt): {temp_diff_values}")
+    # print(f"  Approach (TCSapp): {approach_values}")
     
     # Find exact matches
     matches = valid_df[
@@ -93,7 +93,7 @@ def lookup_allhx_data(power: float, t1: float, temp_diff: float, approach: float
         (valid_df['TCSapp'] == approach)
     ]
     
-    print(f"🎯 Exact matches found: {len(matches)}")
+    # print(f"🎯 Exact matches found: {len(matches)}")
     
     if len(matches) == 0:
         print("❌ No exact match found")
@@ -115,7 +115,7 @@ def lookup_allhx_data(power: float, t1: float, temp_diff: float, approach: float
         'temp_diff': temp_diff
     }
     
-    print(f"✅ Match found: F1={result['F1']}, F2={result['F2']}, HX_Cost=€{result['hx_cost']}")
+    # print(f"✅ Match found: F1={result['F1']}, F2={result['F2']}, HX_Cost=€{result['hx_cost']}")
     
     return result
 

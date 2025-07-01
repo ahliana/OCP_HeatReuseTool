@@ -92,8 +92,8 @@ def get_PipeSize_Suggested(F1):
             return 0
         
         pipsz_df = pipsz_df.copy()
-        print(f"🔍 CEILING lookup for pipe size: flow F1={F1_float}")
-        print(f"📊 PIPSZ data shape: {pipsz_df.shape}")
+        # print(f"🔍 CEILING lookup for pipe size: flow F1={F1_float}")
+        # print(f"📊 PIPSZ data shape: {pipsz_df.shape}")
         
         # Convert columns to numeric
         pipsz_df.iloc[:, 0] = pipsz_df.iloc[:, 0].apply(universal_float_convert)  # Flow capacity
@@ -108,8 +108,8 @@ def get_PipeSize_Suggested(F1):
         # Debug info
         flow_capacities = valid_rows.iloc[:, 0].values
         pipe_sizes = valid_rows.iloc[:, 1].values
-        print(f"📊 Available flow capacities: min={min(flow_capacities)}, max={max(flow_capacities)}")
-        print(f"📊 First few flow/size pairs: {list(zip(flow_capacities[:5], pipe_sizes[:5]))}")
+        # print(f"📊 Available flow capacities: min={min(flow_capacities)}, max={max(flow_capacities)}")
+        # print(f"📊 First few flow/size pairs: {list(zip(flow_capacities[:5], pipe_sizes[:5]))}")
         
         # Find the CEILING - first flow capacity >= required flow
         adequate_rows = valid_rows[valid_rows.iloc[:, 0] >= F1_float]
@@ -123,8 +123,8 @@ def get_PipeSize_Suggested(F1):
         selected_flow_capacity = selected_row.iloc[0]
         selected_pipe_size = selected_row.iloc[1]
         
-        print(f"✅ CEILING match found: Flow capacity {selected_flow_capacity} >= {F1_float} → Pipe Size {selected_pipe_size}")
-        print(f"🔧 Engineering validation: Pipe can handle {selected_flow_capacity} l/m >= required {F1_float} l/m ✓")
+        # print(f"✅ CEILING match found: Flow capacity {selected_flow_capacity} >= {F1_float} → Pipe Size {selected_pipe_size}")
+        # print(f"🔧 Engineering validation: Pipe can handle {selected_flow_capacity} l/m >= required {F1_float} l/m ✓")
         
         return selected_pipe_size
         
@@ -164,7 +164,7 @@ def get_PipeLength(F1, T1, T2):
         
         # Get the first (smallest) adequate room
         length = adequate_rows.iloc[0, 1]
-        print(f"✅ Room length: {length} m for {power_mw} MW")
+        # print(f"✅ Room length: {length} m for {power_mw} MW")
         
         return length
         
@@ -211,7 +211,7 @@ def get_PipeCost_perMeter(flow_rate, pipe_type="sched40"):
         if not matching_rows.empty:
             # Direct DN match found
             cost = matching_rows.iloc[0, col_index]
-            print(f"✅ Direct DN match: DN{dn_size} → €{cost}/m")
+            # print(f"✅ Direct DN match: DN{dn_size} → €{cost}/m")
             return cost
         
         # Option 2: Convert DN to American inches using units.py conversion
@@ -225,7 +225,7 @@ def get_PipeCost_perMeter(flow_rate, pipe_type="sched40"):
                 
                 if not matching_rows.empty:
                     cost = matching_rows.iloc[0, col_index]
-                    print(f"✅ Converted match: DN{dn_size} → {american_inches}\" → €{cost}/m")
+                    # print(f"✅ Converted match: DN{dn_size} → {american_inches}\" → €{cost}/m")
                     return cost
                     
         except ImportError:
@@ -249,7 +249,7 @@ def get_PipeCost_perMeter(flow_rate, pipe_type="sched40"):
             
             if not matching_rows.empty:
                 cost = matching_rows.iloc[0, col_index]
-                print(f"✅ Engineering mapping: DN{dn_size} → {mapped_size}\" → €{cost}/m")
+                # print(f"✅ Engineering mapping: DN{dn_size} → {mapped_size}\" → €{cost}/m")
                 return cost
         
         # Option 4: Find closest available size as engineering fallback
@@ -279,7 +279,7 @@ def get_PipeCost_perMeter(flow_rate, pipe_type="sched40"):
             if closest_size:
                 matching_rows = pipcost_df[pipcost_df.iloc[:, 0] == closest_size]
                 cost = matching_rows.iloc[0, col_index]
-                print(f"✅ Closest engineering match: DN{dn_size} ({dn_inner_diameter}mm) → {closest_size}\" → €{cost}/m")
+                # print(f"✅ Closest engineering match: DN{dn_size} ({dn_inner_diameter}mm) → {closest_size}\" → €{cost}/m")
                 return cost
                 
         except ImportError:
@@ -484,8 +484,8 @@ def get_complete_system_analysis(power, t1, temp_diff, approach):
     """
     CORRECTED: Complete system analysis using formula functions and data module
     """
-    print(f"\n🔧 COMPLETE SYSTEM ANALYSIS")
-    print(f"Input: {power}MW, {t1}°C, +{temp_diff}°C, approach {approach}")
+    # print(f"\n🔧 COMPLETE SYSTEM ANALYSIS")
+    # print(f"Input: {power}MW, {t1}°C, +{temp_diff}°C, approach {approach}")
     
     # Step 1: Get system data from ALLHX
     system_data = lookup_allhx_data(power, t1, temp_diff, approach)
@@ -493,7 +493,7 @@ def get_complete_system_analysis(power, t1, temp_diff, approach):
         print("❌ ALLHX lookup failed")
         return None
     
-    print("✅ ALLHX lookup successful")
+    # print("✅ ALLHX lookup successful")
     
     # Step 2: Calculate sizing using corrected formula functions
     sizing_data = get_system_sizing(system_data)
@@ -501,7 +501,7 @@ def get_complete_system_analysis(power, t1, temp_diff, approach):
         print("❌ System sizing failed")
         return None
     
-    print("✅ System sizing successful")
+    # print("✅ System sizing successful")
     
     # Step 3: Calculate costs using corrected formula functions
     cost_data = calculate_system_costs(system_data, sizing_data)
@@ -509,7 +509,7 @@ def get_complete_system_analysis(power, t1, temp_diff, approach):
         print("❌ Cost calculation failed")
         return None
     
-    print("✅ Cost calculation successful")
+    # print("✅ Cost calculation successful")
     
     # Additional validation using formulas
     F1 = system_data['F1']
@@ -525,11 +525,11 @@ def get_complete_system_analysis(power, t1, temp_diff, approach):
     delta_t_fws = get_DeltaT_FWS(T3, T4)
     approach_calc = get_Approach(T1, T4)
     
-    print(f"🔬 Formula validation:")
-    print(f"  Calculated MW: {calculated_mw}")
-    print(f"  Delta T TCS: {delta_t_tcs}°C")
-    print(f"  Delta T FWS: {delta_t_fws}°C")
-    print(f"  Approach: {approach_calc}")
+    # print(f"🔬 Formula validation:")
+    # print(f"  Calculated MW: {calculated_mw}")
+    # print(f"  Delta T TCS: {delta_t_tcs}°C")
+    # print(f"  Delta T FWS: {delta_t_fws}°C")
+    # print(f"  Approach: {approach_calc}")
     
     # Combine all data
     complete_analysis = {
@@ -556,8 +556,8 @@ def get_complete_system_analysis(power, t1, temp_diff, approach):
         }
     }
     
-    print(f"🎉 Complete system analysis finished successfully!")
-    print(f"📊 Summary: {system_data['power']}MW system, €{round(cost_data['total_cost']):,} total cost")
+    # print(f"🎉 Complete system analysis finished successfully!")
+    # print(f"📊 Summary: {system_data['power']}MW system, €{round(cost_data['total_cost']):,} total cost")
     
     return complete_analysis
 
