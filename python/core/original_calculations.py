@@ -96,8 +96,8 @@ def get_PipeSize_Suggested(F1):
         # print(f"📊 PIPSZ data shape: {pipsz_df.shape}")
         
         # Convert columns to numeric
-        pipsz_df.iloc[:, 0] = pipsz_df.iloc[:, 0].apply(universal_float_convert)  # Flow capacity
-        pipsz_df.iloc[:, 1] = pipsz_df.iloc[:, 1].apply(universal_float_convert)  # Pipe size
+        pipsz_df.iloc[:, 0] = pipsz_df.iloc[:, 0].apply(universal_float_convert).astype(float)  # Flow capacity
+        pipsz_df.iloc[:, 1] = pipsz_df.iloc[:, 1].apply(universal_float_convert).astype(float)  # Pipe size
         
         # Remove invalid rows
         valid_rows = pipsz_df.dropna()
@@ -152,8 +152,8 @@ def get_PipeLength(F1, T1, T2):
             
         # Convert to numeric and find appropriate length
         room_df = room_df.copy()
-        room_df.iloc[:, 0] = room_df.iloc[:, 0].apply(universal_float_convert)  # Power capacity
-        room_df.iloc[:, 1] = room_df.iloc[:, 1].apply(universal_float_convert)  # Length
+        room_df.iloc[:, 0] = room_df.iloc[:, 0].apply(universal_float_convert).astype(float)  # Power capacity
+        room_df.iloc[:, 1] = room_df.iloc[:, 1].apply(universal_float_convert).astype(float)  # Length
         
         # Find ceiling match
         adequate_rows = room_df[room_df.iloc[:, 0] >= power_mw]
@@ -184,7 +184,7 @@ def get_PipeCost_perMeter(flow_rate, pipe_type="sched40"):
             print("❌ No suitable pipe size found")
             return 0
         
-        print(f"🔍 European pipe sizing: DN{dn_size} for flow {flow_rate} L/min")
+        # print(f"🔍 European pipe sizing: DN{dn_size} for flow {flow_rate} L/min")
         
         # Check if PIPCOST data exists
         if not is_csv_loaded('PIPCOST'):
@@ -383,8 +383,8 @@ def get_system_sizing(system_data):
         if room_df is not None:
             room_df = room_df.copy()
             # Convert columns to numeric
-            room_df.iloc[:, 0] = room_df.iloc[:, 0].apply(universal_float_convert)  # Power column
-            room_df.iloc[:, 1] = room_df.iloc[:, 1].apply(universal_float_convert)  # Room size column
+            room_df.iloc[:, 0] = room_df.iloc[:, 0].apply(universal_float_convert).astype(float)  # Power column
+            room_df.iloc[:, 1] = room_df.iloc[:, 1].apply(universal_float_convert).astype(float)  # Room size column
             
             for idx, row in room_df.iterrows():
                 power_val = row.iloc[0]
