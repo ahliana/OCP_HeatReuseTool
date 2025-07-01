@@ -14,26 +14,26 @@ UI_CONFIG = {
         'power': {
             'options': [1, 2, 3, 4, 5],
             'default': 1,
-            'label': 'Power/Capacity:',
+            'label': 'Power/Capacity (MW):',
             'tooltip': 'System power capacity in MW'
         },
         't1': {
             'options': [20, 30, 45],
             'default': 20,
-            'label': 'T1 Temperature:',
+            'label': 'T1 Temperature (°C):',
             'tooltip': 'T1 outlet temperature in °C'
         },
         'temp_diff': {
             'options': [10, 12, 14],
             'default': 10,
-            'label': 'Temperature Rise:',
+            'label': 'Temperature Rise (°C):',
             'tooltip': 'Temperature difference (T2 - T1) in °C'
         },
         'approach': {
             'options': [2, 3, 5],
             'default': 2,
-            'label': 'Approach:',
-            'tooltip': 'System approach value'
+            'label': 'Approach (°C):',
+            'tooltip': 'System approach value in °C'
         }
     },
     'button': {
