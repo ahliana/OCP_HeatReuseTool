@@ -55,7 +55,7 @@ def get_pip_freeze():
         return [f"Error getting pip freeze: {str(e)}"]
 
 def get_jupyter_info():
-    """Get Jupyter configuration"""
+    """Get Jupyter configuration including detailed ipykernel information"""
     try:
         jupyter_info = {}
         
@@ -67,14 +67,34 @@ def get_jupyter_info():
         else:
             jupyter_info["version"] = "Jupyter not found"
         
-        # Jupyter kernels
+        # Jupyter kernels with detailed info
         result = subprocess.run(["jupyter", "kernelspec", "list", "--json"], 
                               capture_output=True, text=True)
         if result.returncode == 0:
             kernels = json.loads(result.stdout)
             jupyter_info["kernels"] = kernels
+            
+            # Extract Heat Reuse Tool kernel info specifically
+            heat_reuse_kernels = {}
+            if 'kernelspecs' in kernels:
+                for kernel_name, kernel_info in kernels['kernelspecs'].items():
+                    if 'heat-reuse' in kernel_name.lower():
+                        heat_reuse_kernels[kernel_name] = kernel_info
+            
+            jupyter_info["heat_reuse_tool_kernels"] = heat_reuse_kernels
+            
+            # Check if ipykernel is properly installed
+            try:
+                import ipykernel
+                jupyter_info["ipykernel_version"] = ipykernel.__version__
+                jupyter_info["ipykernel_available"] = True
+            except ImportError:
+                jupyter_info["ipykernel_version"] = "Not installed"
+                jupyter_info["ipykernel_available"] = False
         else:
             jupyter_info["kernels"] = "Could not get kernels"
+            jupyter_info["heat_reuse_tool_kernels"] = {}
+            jupyter_info["ipykernel_available"] = False
         
         # Jupyter paths
         result = subprocess.run(["jupyter", "--paths", "--json"], 
@@ -85,9 +105,75 @@ def get_jupyter_info():
         else:
             jupyter_info["paths"] = "Could not get paths"
         
+        # Check if ipykernel install command works
+        result = subprocess.run([sys.executable, "-m", "ipykernel", "--help"], 
+                              capture_output=True, text=True)
+        jupyter_info["ipykernel_command_available"] = result.returncode == 0
+        
+        # Get installed kernels directory info
+        try:
+            from jupyter_client.kernelspec import KernelSpecManager
+            ksm = KernelSpecManager()
+            jupyter_info["kernel_directories"] = {
+                "user": ksm.user_kernel_dir,
+                "system": ksm.system_kernel_dir if hasattr(ksm, 'system_kernel_dir') else "N/A"
+            }
+        except Exception as e:
+            jupyter_info["kernel_directories"] = {"error": str(e)}
+        
         return jupyter_info
     except Exception as e:
         return {"error": f"Error getting Jupyter info: {str(e)}"}
+
+def check_ipykernel_installation():
+    """Specifically check ipykernel installation and registration capabilities"""
+    ipykernel_info = {
+        "package_installed": False,
+        "version": None,
+        "install_command_works": False,
+        "heat_reuse_kernel_registered": False,
+        "can_register_kernels": False,
+        "jupyter_available": False,
+        "errors": []
+    }
+    
+    try:
+        # Check if ipykernel package is installed
+        import ipykernel
+        ipykernel_info["package_installed"] = True
+        ipykernel_info["version"] = ipykernel.__version__
+    except ImportError:
+        ipykernel_info["errors"].append("ipykernel package not installed")
+    
+    try:
+        # Check if ipykernel install command works
+        result = subprocess.run([sys.executable, "-m", "ipykernel", "--help"], 
+                              capture_output=True, text=True)
+        ipykernel_info["install_command_works"] = result.returncode == 0
+        if result.returncode != 0:
+            ipykernel_info["errors"].append(f"ipykernel command failed: {result.stderr}")
+    except Exception as e:
+        ipykernel_info["errors"].append(f"Could not test ipykernel command: {str(e)}")
+    
+    try:
+        # Check if Jupyter is available for kernel registration
+        result = subprocess.run(["jupyter", "kernelspec", "list"], 
+                              capture_output=True, text=True)
+        ipykernel_info["jupyter_available"] = result.returncode == 0
+        
+        if result.returncode == 0:
+            # Check if heat-reuse-tool kernel is registered
+            if 'heat-reuse-tool' in result.stdout.lower():
+                ipykernel_info["heat_reuse_kernel_registered"] = True
+            
+            # Test if we can register kernels (dry run)
+            ipykernel_info["can_register_kernels"] = True
+        else:
+            ipykernel_info["errors"].append("Jupyter kernelspec command not available")
+    except Exception as e:
+        ipykernel_info["errors"].append(f"Could not check Jupyter availability: {str(e)}")
+    
+    return ipykernel_info
 
 def get_vscode_extensions():
     """Get VSCode extensions"""
@@ -190,6 +276,7 @@ def export_environment(machine_name=None):
         "python_packages": get_python_packages(),
         "pip_freeze": get_pip_freeze(),
         "jupyter_info": get_jupyter_info(),
+        "ipykernel_info": check_ipykernel_installation(),  # NEW: Detailed ipykernel check
         "vscode_extensions": get_vscode_extensions(),
         "git_info": get_git_info(),
         "project_structure": get_project_structure(),
@@ -216,11 +303,47 @@ def export_environment(machine_name=None):
         create_summary_file(environment_data, summary_filename)
         print(f"✓ Summary created: {summary_filename}")
         
+        # Print quick ipykernel status
+        print_ipykernel_status(environment_data.get('ipykernel_info', {}))
+        
         return str(filename)
         
     except Exception as e:
         print(f"✗ Error saving environment: {str(e)}")
         return None
+
+def print_ipykernel_status(ipykernel_info):
+    """Print quick ipykernel status summary"""
+    print("\n" + "="*30)
+    print("IPYKERNEL STATUS SUMMARY")
+    print("="*30)
+    
+    if ipykernel_info.get('package_installed'):
+        print(f"✓ ipykernel package: v{ipykernel_info.get('version', 'Unknown')}")
+    else:
+        print("✗ ipykernel package: NOT INSTALLED")
+    
+    if ipykernel_info.get('install_command_works'):
+        print("✓ ipykernel install command: Available")
+    else:
+        print("✗ ipykernel install command: NOT WORKING")
+    
+    if ipykernel_info.get('heat_reuse_kernel_registered'):
+        print("✓ Heat Reuse Tool kernel: Registered")
+    else:
+        print("✗ Heat Reuse Tool kernel: NOT REGISTERED")
+    
+    if ipykernel_info.get('jupyter_available'):
+        print("✓ Jupyter kernelspec: Available")
+    else:
+        print("✗ Jupyter kernelspec: NOT AVAILABLE")
+    
+    if ipykernel_info.get('errors'):
+        print("\nErrors found:")
+        for error in ipykernel_info['errors']:
+            print(f"  - {error}")
+    
+    print()
 
 def create_summary_file(env_data, filename):
     """Create human-readable summary file"""
@@ -241,10 +364,24 @@ def create_summary_file(env_data, filename):
             # Key packages
             f.write("KEY PACKAGES:\n")
             packages = env_data.get('python_packages', [])
-            key_packages = ['jupyter', 'pandas', 'numpy', 'matplotlib', 'scipy', 'ipywidgets']
+            key_packages = ['jupyter', 'pandas', 'numpy', 'matplotlib', 'scipy', 'ipywidgets', 'ipykernel']
             for pkg in packages:
                 if isinstance(pkg, dict) and pkg.get('name', '').lower() in key_packages:
                     f.write(f"{pkg['name']}: {pkg['version']}\n")
+            f.write("\n")
+            
+            # IPYKERNEL STATUS (NEW SECTION)
+            f.write("IPYKERNEL STATUS:\n")
+            ipykernel_info = env_data.get('ipykernel_info', {})
+            f.write(f"Package Installed: {'✓' if ipykernel_info.get('package_installed') else '✗'}\n")
+            f.write(f"Version: {ipykernel_info.get('version', 'N/A')}\n")
+            f.write(f"Install Command Works: {'✓' if ipykernel_info.get('install_command_works') else '✗'}\n")
+            f.write(f"Heat Reuse Kernel Registered: {'✓' if ipykernel_info.get('heat_reuse_kernel_registered') else '✗'}\n")
+            f.write(f"Jupyter Available: {'✓' if ipykernel_info.get('jupyter_available') else '✗'}\n")
+            if ipykernel_info.get('errors'):
+                f.write("Errors:\n")
+                for error in ipykernel_info['errors']:
+                    f.write(f"  - {error}\n")
             f.write("\n")
             
             # Required files status
@@ -261,7 +398,19 @@ def create_summary_file(env_data, filename):
             kernels = jupyter_info.get('kernels', {})
             if isinstance(kernels, dict) and 'kernelspecs' in kernels:
                 for kernel_name in kernels['kernelspecs'].keys():
-                    f.write(f"  - {kernel_name}\n")
+                    marker = "🎯" if 'heat-reuse' in kernel_name.lower() else "  "
+                    f.write(f"{marker} {kernel_name}\n")
+            
+            # Heat Reuse Tool specific kernels
+            heat_reuse_kernels = jupyter_info.get('heat_reuse_tool_kernels', {})
+            if heat_reuse_kernels:
+                f.write("\nHEAT REUSE TOOL KERNELS:\n")
+                for kernel_name, kernel_info in heat_reuse_kernels.items():
+                    f.write(f"✓ {kernel_name}\n")
+                    if 'spec' in kernel_info and 'display_name' in kernel_info['spec']:
+                        f.write(f"    Display Name: {kernel_info['spec']['display_name']}\n")
+                    if 'resource_dir' in kernel_info:
+                        f.write(f"    Location: {kernel_info['resource_dir']}\n")
             f.write("\n")
             
     except Exception as e:
